@@ -12,9 +12,20 @@ This project packages those playbooks into a CLI that surfaces fresh signals, hi
 
 ## Features
 
+### Core Analysis
+
 - 🧠 **Strategy Evaluations**: Sniper, Whale Copy, Momentum Breakout, and Grid Bot modules share a common interface and emit actionable signals.
 - 🛡️ **Risk Manager**: Centralized position sizing, stop-loss, and profit-taking rules (1–2% per trade, 5–10% stops, 50% trim at 2×).
 - 📊 **Whale Leaderboard**: Reuses the original dataset to rank top holders and track balance deltas.
+
+### 🎯 NEW: Autonomous Features
+
+- **Token Scanner**: Continuously monitors Pump.fun launches and DEX activity for tokens meeting whale accumulation criteria (concentration, volume, liquidity thresholds).
+- **Auto-Flagging**: Automatically detects and scores tokens with profitability indicators (75-100 score based on whale activity, rug risk, market metrics).
+- **Discord Notifications**: Sends rich embeds to Discord channels when profitable tokens are discovered.
+- **N8N Workflow Integration**: Webhook support for advanced automation with Claude AI analysis, multi-channel alerts, and database logging.
+- **Interactive Quickstart**: User-friendly menu system for easy access to all program features.
+- **API Validation**: Built-in utility to verify Helius RPC, API keys, and endpoint connectivity before trading.
 
 ## Getting Started
 
@@ -66,12 +77,34 @@ DEFAULT_BANKROLL=5000
 
 ### Run the CLI
 
+#### 🚀 NEW: Interactive Quickstart Menu
+
+```bash
+npm run quickstart
+```
+
+Launches an interactive menu with guided access to all features:
+
+- Analyze tokens
+- Start autonomous scanner
+- Validate API configuration
+- View journal entries
+- Configure settings
+
+#### Standard Commands
+
 ```bash
 # One-shot analysis (default command)
 npm run analyze -- --mint=<mint-address>
 
 # Continuous streaming refresh
 npm run stream -- --mint=<mint-address> --interval=90
+
+# 🎯 NEW: Autonomous Token Scanner (monitors for profitable opportunities)
+npm run scan -- --interval=60
+
+# 🔍 NEW: Validate API Keys & RPC Connectivity
+npm run validate
 
 # Backtest placeholder (reuses analyze)
 npm run backtest -- --mint=<mint-address>
@@ -81,7 +114,7 @@ Common options:
 
 - `--bankroll=<usd>`: override bankroll for risk sizing.
 - `--json`: emit raw JSON output.
-- `--interval=<seconds>`: refresh cadence for stream mode.
+- `--interval=<seconds>`: refresh cadence for stream/scan mode.
 
 ### Sample CLI Output
 
@@ -126,6 +159,72 @@ npm test tests/providers/dexscreenerProvider.test.js
 - Risk manager calculations (position sizing, stops, targets)
 - Full analyze pipeline integration
 - CLI rendering safety
+
+## Integrations & Automation
+
+### Discord Notifications
+
+Configure Discord webhooks to receive real-time alerts when the scanner finds profitable tokens:
+
+```bash
+# In .env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_TOKEN
+```
+
+The scanner automatically sends rich Discord embeds with:
+
+- Token mint address and symbol
+- Profitability score (0-100)
+- Reasons why the token was flagged
+- Market data (price, volume, liquidity)
+- Actionable next steps
+
+### N8N Workflow Integration
+
+Connect Whale Watcher to N8N for advanced automation:
+
+**Setup:**
+
+1. Install N8N: `docker run -it --rm --name n8n -p 5678:5678 n8nio/n8n`
+2. Create webhook workflow in N8N (see `docs/N8N_INTEGRATION.md`)
+3. Add webhook URL to `.env`:
+
+```bash
+N8N_WEBHOOK_URL=http://localhost:5678/webhook/whale-watcher
+```
+
+**Use Cases:**
+
+- **Claude AI Analysis**: Send flagged tokens to Claude for risk assessment and entry strategy
+- **Multi-Channel Alerts**: Broadcast to Discord, Telegram, Email, SMS simultaneously
+- **Database Logging**: Store opportunities in PostgreSQL, MongoDB, or Airtable
+- **Trading Bot Integration**: Trigger automated trades via Telegram bots or exchange APIs
+
+See **[docs/N8N_INTEGRATION.md](docs/N8N_INTEGRATION.md)** for complete workflow templates and examples.
+
+### Autonomous Scanner
+
+The scanner runs continuously and evaluates tokens against these criteria:
+
+**Whale Activity:**
+
+- Top 5 holder concentration: 15-50% (sweet spot for momentum)
+- Accumulation detected: Whales adding 5k+ tokens
+
+**Launch Characteristics:**
+
+- Age: < 15 minutes (fresh Pump.fun launches)
+- Liquidity: > $10k USD
+- Rug score: < 40%
+- Team share: < 20%
+
+**Market Metrics:**
+
+- 24h volume: > $50k USD
+- Volume spike: 2.5x ratio (24h / 6h)
+- RSI momentum: 60-85 range
+
+**Scoring:** Tokens meeting 3-4 criteria get flagged with scores 60-100.
 
 ## Project Structure
 

@@ -20,6 +20,15 @@ module.exports = function createCli(context) {
       case 'backtest':
         await handleBacktest(argv.slice(1));
         break;
+      case 'scan':
+        await handleScan(argv.slice(1));
+        break;
+      case 'validate':
+        await handleValidate(argv.slice(1));
+        break;
+      case 'quickstart':
+        await handleQuickstart(argv.slice(1));
+        break;
       case 'help':
       default:
         printHelp();
@@ -44,6 +53,58 @@ module.exports = function createCli(context) {
     logger.info('Backtest mode currently reuses analyze implementation.', options);
     const result = await app.analyze({ ...options, backtest: true });
     renderResult(result, options);
+  }
+
+  async function handleScan(args) {
+    const options = parseOptions(args);
+    const TokenScanner = require('./scanner');
+    const { createDiscordNotifier } = require('../integrations/discord');
+    
+    const scanner = new TokenScanner(context);
+    const discord = createDiscordNotifier();
+    
+    const intervalSeconds = options.interval || 60;
+    logger.info('Starting autonomous token scanner', { intervalSeconds });
+    
+    scanner.start({
+      intervalSeconds,
+      onTokenFlagged: async (evaluation) => {
+        console.log('\n' + '═'.repeat(70));
+        console.log(`🎯 PROFITABLE TOKEN DETECTED: ${evaluation.symbol}`);
+        console.log('═'.repeat(70));
+        console.log(`Mint: ${evaluation.mint}`);
+        console.log(`Score: ${evaluation.score}/100`);
+        console.log('\nReasons:');
+        evaluation.reasons.forEach(r => console.log(`  ${r}`));
+        console.log('\n💡 ACTION: Copy mint address and analyze or snipe immediately!');
+        console.log('═'.repeat(70) + '\n');
+        
+        // Send Discord notification if configured
+        if (discord.enabled) {
+          await discord.notifyFlaggedToken(evaluation);
+        }
+      },
+    });
+    
+    console.log('🚀 Scanner running... Press Ctrl+C to stop.\n');
+    
+    // Keep process alive
+    await new Promise(() => {});
+  }
+
+  async function handleValidate(args) {
+    const { validateEnvironment } = require('../utils/validateEnv');
+    const result = await validateEnvironment(context.config);
+    
+    if (!result.valid) {
+      process.exit(1);
+    }
+  }
+
+  async function handleQuickstart(args) {
+    const Quickstart = require('./quickstart');
+    const quickstart = new Quickstart(context);
+    await quickstart.showMenu();
   }
 
   function renderResult(result, options) {
@@ -128,13 +189,33 @@ module.exports = function createCli(context) {
   }
 
   function printHelp() {
-    console.log('Usage: node src/index.js <command> [options]');
-    console.log('Commands: analyze, stream, backtest, help');
-    console.log('Options:');
+    console.log('\n╔═══════════════════════════════════════════════════════════════════╗');
+    console.log('║            SOLANA WHALE WATCHER 2.0 - Command Reference          ║');
+    console.log('╚═══════════════════════════════════════════════════════════════════╝\n');
+    console.log('Usage: node src/index.js <command> [options]\n');
+    console.log('COMMANDS:\n');
+    console.log('  quickstart        Interactive menu for easy access to all features');
+    console.log('  analyze           Analyze a single token (one-time snapshot)');
+    console.log('  scan              Start autonomous token scanner (monitors for opportunities)');
+    console.log('  stream            Continuous token monitoring with periodic updates');
+    console.log('  validate          Verify API keys and RPC connectivity');
+    console.log('  backtest          Backtest strategies (currently uses analyze)');
+    console.log('  help              Display this help message\n');
+    console.log('OPTIONS:\n');
     console.log('  --mint=<address>          Token mint address to analyze');
-    console.log('  --interval=<seconds>      Refresh cadence for stream mode');
-    console.log('  --json                    Print raw JSON output');
-    console.log('  --bankroll=<number>       Override bankroll for risk manager');
+    console.log('  --interval=<seconds>      Scan/refresh interval (default: 60)');
+    console.log('  --bankroll=<number>       Override bankroll for risk calculations');
+    console.log('  --json                    Output raw JSON instead of formatted text\n');
+    console.log('EXAMPLES:\n');
+    console.log('  # Interactive quickstart menu');
+    console.log('  npm run quickstart\n');
+    console.log('  # Analyze a specific token');
+    console.log('  npm run analyze -- --mint=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263\n');
+    console.log('  # Start autonomous scanner (checks every 60 seconds)');
+    console.log('  npm run scan -- --interval=60\n');
+    console.log('  # Validate API configuration');
+    console.log('  npm run validate\n');
+    console.log('For full documentation, see USER_GUIDE.md and N8N_INTEGRATION.md\n');
   }
 
   function formatNumber(value) {

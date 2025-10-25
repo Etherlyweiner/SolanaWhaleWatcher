@@ -7,8 +7,11 @@
     "start": "node src/index.js",
     "lint": "eslint .",
     "test": "node --test",
+    "quickstart": "node src/index.js quickstart",
     "analyze": "node src/index.js analyze",
+    "scan": "node src/index.js scan",
     "stream": "node src/index.js stream",
+    "validate": "node src/index.js validate",
     "backtest": "node src/index.js backtest"
   },
   "dependencies": {
