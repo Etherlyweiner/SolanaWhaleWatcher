@@ -20,6 +20,7 @@
 **Solana Whale Watcher 2.0** is a CLI-based trading assistant designed to help Solana traders identify and evaluate high-velocity memecoin opportunities using data-driven strategies and disciplined risk management.
 
 The tool analyzes tokens by:
+
 - Tracking whale wallet movements and holder concentration
 - Monitoring fresh Pump.fun launches for sniper opportunities
 - Identifying momentum breakouts using volume and price data
@@ -66,6 +67,7 @@ STOP_LOSS_PERCENT=0.08
 ```
 
 **Where to get API keys:**
+
 - **Helius**: Sign up at [helius.dev](https://helius.dev) for RPC and REST API access
 - **Dexscreener**: No API key required (public endpoints)
 - **Pump.fun**: No API key required (public endpoints)
@@ -84,7 +86,7 @@ If all tests pass, you're ready to run the analyzer!
 
 ### Architecture Overview
 
-```
+```text
 User Input (Token Mint) 
     ↓
 [Data Collection Layer]
@@ -139,21 +141,25 @@ User Input (Token Mint)
 ### 2. Four Trading Strategies
 
 #### A. Sniper Trading
+
 - Monitors Pump.fun for fresh token launches (< 15 minutes old)
 - Scores launches based on liquidity, team share, and rug risk
 - Provides mint addresses and creator info for bot execution
 
 #### B. Copy Trading Whale Wallets
+
 - Identifies high-performing wallets (65%+ win rate, high PnL)
 - Merges data from GMGN and Nansen watchlists
 - Provides wallet activity metrics (recent trades, avg profit)
 
 #### C. Momentum / Breakout Trading
+
 - Detects volume spikes and RSI momentum
 - Calculates breakout probability
 - Warns about whale concentration that could fuel or kill moves
 
 #### D. Automated Bot / Grid Trading
+
 - Generates grid parameters (entry levels, spacing, capital allocation)
 - Adapts to volatility (wider grids for high vol, tighter for ranging)
 - Provides health checks (liquidity, slippage risk)
@@ -184,6 +190,7 @@ npm run analyze -- --mint=<TOKEN_MINT_ADDRESS>
 ```
 
 **Example:**
+
 ```bash
 npm run analyze -- --mint=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
 ```
@@ -239,6 +246,7 @@ Each strategy section includes:
 3. **Signals**: Actionable data points with metrics
 
 **Example:**
+
 ```text
 --- Sniper Trading ---
 Narrative: Detected 2 promising Pump.fun listings with low rug scores.
@@ -251,6 +259,7 @@ Signals:
 ```
 
 **How to use:**
+
 - If narrative is positive and rug score < 30%, consider sniping via bot
 - Always verify contract is renounced and LP locked before entry
 - Use Jito tips to avoid MEV sandwich attacks
@@ -264,17 +273,20 @@ Signals:
 **Goal**: Catch tokens within minutes of Pump.fun launch before Raydium migration
 
 **Signals to Watch:**
+
 - Age < 15 minutes
 - Initial liquidity > $10k
 - Team share < 20%
 - Rug score < 40%
 
 **Execution:**
+
 - Use Trojan Bot or BonkBot for instant fills
 - Entry: 1-2% of bankroll
 - Exit: 5-10x or when LP migrates to Raydium
 
 **Risks:**
+
 - 95% of Pump.fun tokens rug within 24 hours
 - MEV bots can front-run your entries
 - Slippage can be 10-20% during congestion
@@ -284,18 +296,21 @@ Signals:
 **Goal**: Mirror trades of high-performing wallets
 
 **Signals to Watch:**
+
 - Win rate > 65%
 - PnL > $50k
 - Recent activity (trades in last 7 days)
 - Nansen smart money tags
 
 **Execution:**
+
 - Set alerts for wallet activity (GMGN/Nansen)
 - Enter within 5 minutes of whale entry
 - Never chase if price already moved 10%+
 - Exit when whale scales out (track on-chain)
 
 **Risks:**
+
 - Execution delay (whales dump on followers)
 - False signals (wallets can go cold)
 - Capital efficiency (many positions open simultaneously)
@@ -305,17 +320,20 @@ Signals:
 **Goal**: Ride explosive moves confirmed by volume and RSI
 
 **Signals to Watch:**
+
 - Volume spike (24h > 3× 6h average)
 - RSI > 65 (but < 85 to avoid overbought)
 - Breakout probability > 60%
 - Low whale concentration (< 40% in top 5)
 
 **Execution:**
+
 - Wait for 1h close above resistance
 - Entry: 2% of bankroll with tight stop (5-8%)
 - Exit: 50% at 2×, trail rest with 15% trailing stop
 
 **Risks:**
+
 - False breakouts during Solana congestion
 - Whale dumps can reverse moves instantly
 - Momentum fades fast in memecoins (hours, not days)
@@ -325,16 +343,19 @@ Signals:
 **Goal**: Harvest profits in ranging markets with automated buy/sell orders
 
 **Signals to Watch:**
+
 - Volatility score < 0.15 (ranging, not trending)
 - Daily volume > $50k (sufficient liquidity)
 - 8-level grid suggested by bot
 
 **Execution:**
+
 - Deploy grid with Sniperoo/Trojan/JitoXAi
 - Capital allocation: 10-20% of bankroll max
 - Monitor slippage and stop bot if drawdown > 10%
 
 **Risks:**
+
 - Bots underperform in parabolic trends
 - Smart contract risk (use audited bots only)
 - Fees eat into profits (factor in 0.3-0.5% per trade)
@@ -345,28 +366,31 @@ Signals:
 
 ### Position Sizing Rules
 
-```
+```text
 Max Position = Bankroll × MAX_POSITION_PERCENT (default 2%)
 ```
 
 **Example:**
+
 - Bankroll: $5,000
 - Max position: $100
 
 **Why this matters:**
+
 - Prevents catastrophic losses from a single trade
 - Allows 50+ trades before risking entire bankroll
 - Keeps emotions in check (small positions = less stress)
 
 ### Stop Loss Discipline
 
-```
+```text
 Stop Loss = Entry Price × (1 - STOP_LOSS_PERCENT)
 ```
 
 **Default:** 8% below entry
 
 **Execution:**
+
 - Set stop immediately after entry (no exceptions)
 - Use limit orders, not market (avoid slippage)
 - Never move stop lower (only higher to lock profits)
@@ -378,6 +402,7 @@ Stop Loss = Entry Price × (1 - STOP_LOSS_PERCENT)
 3. **Third Target (10×)**: Let 25% run with trailing stop
 
 **Why partial exits:**
+
 - Locks in gains while leaving room for 10-100× moonshots
 - Reduces FOMO (you still have skin in the game)
 - Builds discipline (prevents "holding through crashes")
@@ -405,7 +430,7 @@ Stop Loss = Entry Price × (1 - STOP_LOSS_PERCENT)
 
 Edit `.env` to tighten or loosen risk controls:
 
-```env
+```bash
 # Conservative (1% positions, tight 5% stops)
 MAX_POSITION_PERCENT=0.01
 STOP_LOSS_PERCENT=0.05
@@ -428,6 +453,7 @@ STOP_LOSS_PERCENT=0.15
 **Cause**: Invalid mint address or token not listed on Dexscreener
 
 **Fix:**
+
 - Verify mint address on Solscan
 - Try a different token with active DEX trading
 - Check Helius API key is valid
@@ -437,6 +463,7 @@ STOP_LOSS_PERCENT=0.15
 **Cause**: Too many requests to Helius or Dexscreener
 
 **Fix:**
+
 - Increase `DEXSCREENER_RETRY_BASE_DELAY_MS` in `.env`
 - Reduce stream refresh interval: `--interval=120`
 - Upgrade Helius plan for higher rate limits
@@ -446,6 +473,7 @@ STOP_LOSS_PERCENT=0.15
 **Cause**: Missing provider data or timeout
 
 **Fix:**
+
 - Check internet connection
 - Verify all API endpoints are reachable
 - Review logs in console for specific error
@@ -455,6 +483,7 @@ STOP_LOSS_PERCENT=0.15
 **Cause**: Stale dependencies or environment issues
 
 **Fix:**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install

@@ -120,6 +120,7 @@ npm test tests/providers/dexscreenerProvider.test.js
 ```
 
 **Test Coverage:**
+
 - Provider caching and API integration (Helius, Dexscreener)
 - Strategy output validation (all 4 strategies)
 - Risk manager calculations (position sizing, stops, targets)
