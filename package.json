@@ -4,11 +4,12 @@
   "description": "CLI assistant for Solana memecoin trading strategies",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js analyze",
+    "start": "node src/index.js",
+    "lint": "eslint .",
+    "test": "node --test",
     "analyze": "node src/index.js analyze",
     "stream": "node src/index.js stream",
-    "backtest": "node src/index.js backtest",
-    "test": "node --test"
+    "backtest": "node src/index.js backtest"
   },
   "dependencies": {
     "@solana/web3.js": "1.91.0",

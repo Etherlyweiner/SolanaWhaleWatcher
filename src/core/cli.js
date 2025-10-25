@@ -63,10 +63,23 @@ module.exports = function createCli(context) {
     console.log(`Top Holders Analyzed: ${result.holders.length}`);
     console.log('');
 
+    if (Array.isArray(result.leaderboard) && result.leaderboard.length > 0) {
+      console.log('Leaderboard (Top 10 with Δ balance):');
+      result.leaderboard.slice(0, 10).forEach((entry) => {
+        const delta = entry.balanceDelta == null ? 'n/a' : formatNumber(entry.balanceDelta);
+        const previousRank = entry.previousRank == null ? 'new' : `#${entry.previousRank}`;
+        console.log(
+          `  #${entry.rank} ${entry.wallet} – balance: ${formatNumber(entry.balance)} (Δ ${delta}, prev ${previousRank})`
+        );
+      });
+      console.log('');
+    }
+
     result.strategies.forEach((strategy) => {
       console.log(`--- ${strategy.name} ---`);
       console.log(`Narrative: ${strategy.narrative}`);
-      console.log(`Risk Notes: ${strategy.risk.notes.join('; ') || 'None'}`);
+      const riskNotes = Array.isArray(strategy.risk?.notes) ? strategy.risk.notes.join('; ') : null;
+      console.log(`Risk Notes: ${riskNotes || 'None'}`);
       console.log('Signals:');
       strategy.signals.forEach((signal, index) => {
         console.log(`  ${index + 1}. ${signal.title}`);
@@ -122,6 +135,17 @@ module.exports = function createCli(context) {
     console.log('  --interval=<seconds>      Refresh cadence for stream mode');
     console.log('  --json                    Print raw JSON output');
     console.log('  --bankroll=<number>       Override bankroll for risk manager');
+  }
+
+  function formatNumber(value) {
+    const num = Number(value);
+    if (!Number.isFinite(num)) {
+      return 'n/a';
+    }
+    if (Math.abs(num) >= 1) {
+      return num.toFixed(2);
+    }
+    return num.toPrecision(3);
   }
 
   return {

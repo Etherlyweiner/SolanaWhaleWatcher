@@ -1,10 +1,13 @@
+
 'use strict';
 
 const { fetchJson } = require('../../util/http');
+const { TtlCache } = require('../../util/cache');
 
 module.exports = (context) => {
   const logger = context.logger.child('provider:pumpfun');
   const config = context.config.providers.pumpfun;
+  const cache = new TtlCache({ ttlMs: config.cacheTtlMs ?? context.config.cache.ttlMs });
 
   async function getRecentLaunches(options = {}) {
     if (!config?.enabled) {
@@ -14,6 +17,12 @@ module.exports = (context) => {
 
     const limit = options.limit || 20;
     const offset = options.offset || 0;
+
+    const cacheKey = `${limit}:${offset}:${options.order || 'new'}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cloneLaunches(cached);
+    }
 
     try {
       const url = buildBrowseUrl(config.baseUrl, { limit, offset, order: options.order || 'new' });
@@ -32,8 +41,7 @@ module.exports = (context) => {
       );
 
       const items = normalizeLaunchPayload(response);
-
-      return items.map((item) => ({
+      const normalized = items.map((item) => ({
         mint: item.mint,
         name: item.name,
         symbol: item.symbol,
@@ -43,6 +51,10 @@ module.exports = (context) => {
         rugScore: item.rugScore,
         creator: item.creator,
       }));
+
+      cache.set(cacheKey, normalized, config.cacheTtlMs ?? context.config.cache.ttlMs / 2);
+
+      return cloneLaunches(normalized);
     } catch (error) {
       logger.error('Pump.fun launch fetch failed', { error: error.message });
       return [];
@@ -53,6 +65,10 @@ module.exports = (context) => {
     getRecentLaunches,
   };
 };
+
+function cloneLaunches(list = []) {
+  return list.map((item) => ({ ...item }));
+}
 
 function buildBrowseUrl(baseUrl, { limit, offset, order }) {
   const url = new URL('browse/new', ensureTrailingSlash(baseUrl));

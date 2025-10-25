@@ -1,10 +1,14 @@
 'use strict';
 
-const { fetchJson } = require('../../util/http');
+const { TtlCache } = require('../../util/cache');
+const { roundTo } = require('../../util/number');
 
 module.exports = (context) => {
   const logger = context.logger.child('provider:helius');
   const config = context.config.providers.helius;
+  const cache = new TtlCache({ ttlMs: context.config.cache.ttlMs });
+  const rpc = require('./heliusRpc')(context);
+  const rest = require('./heliusRest')(context);
 
   function isEnabled() {
     if (!config?.rpcUrl) {
@@ -17,74 +21,21 @@ module.exports = (context) => {
     return true;
   }
 
-  async function rpcRequest(method, params = []) {
-    if (!config?.rpcUrl) {
-      throw new Error('Helius RPC URL not configured');
-    }
-
-    const body = {
-      jsonrpc: '2.0',
-      id: `helius-${method}`,
-      method,
-      params,
-    };
-
-    const response = await fetchJson(
-      config.rpcUrl,
-      {
-        method: 'POST',
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-      {
-        retries: config.maxRetries,
-        baseDelayMs: config.baseRetryMs,
-      }
-    );
-
-    if (response?.error) {
-      const error = new Error(response.error.message || 'Helius RPC error');
-      error.code = response.error.code;
-      throw error;
-    }
-
-    return response?.result;
-  }
-
-  async function restRequest(path, { method = 'POST', body = {} } = {}) {
-    const url = new URL(path, ensureTrailingSlash(config.restUrl));
-    if (config.apiKey) {
-      url.searchParams.set('api-key', config.apiKey);
-    }
-
-    return fetchJson(
-      url.toString(),
-      {
-        method,
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
-        },
-      },
-      {
-        retries: config.maxRetries,
-        baseDelayMs: config.baseRetryMs,
-      }
-    );
-  }
-
   async function getTokenIntel(mint, { holderLimit = 10 } = {}) {
     if (!isEnabled()) {
       return null;
     }
 
     try {
+      const cacheKey = `token-intel:${mint}:${holderLimit}`;
+      const cached = cache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
       const [supplyResult, largestAccounts] = await Promise.all([
-        rpcRequest('getTokenSupply', [mint]),
-        rpcRequest('getTokenLargestAccounts', [mint, { commitment: context.config.solana.commitment }]),
+        rpc.request('getTokenSupply', [mint]),
+        rpc.request('getTokenLargestAccounts', [mint, { commitment: context.config.solana.commitment }]),
       ]);
 
       const decimals = supplyResult?.value?.decimals ?? 0;
@@ -94,30 +45,14 @@ module.exports = (context) => {
       const accountAddresses = largest.map((entry) => entry.address);
       let ownerInfos = [];
       if (accountAddresses.length > 0) {
-        const ownersResponse = await rpcRequest('getMultipleAccounts', [
+        const ownersResponse = await rpc.request('getMultipleAccounts', [
           accountAddresses,
           { encoding: 'jsonParsed', commitment: context.config.solana.commitment },
         ]);
         ownerInfos = ownersResponse?.value || [];
       }
 
-      let metadata = null;
-      if (config.apiKey) {
-        try {
-          const metaResponse = await restRequest('v1/token-metadata', {
-            body: {
-              mintAccounts: [mint],
-              includeOffChain: true,
-            },
-          });
-
-          metadata = Array.isArray(metaResponse?.result)
-            ? metaResponse.result.find((entry) => entry?.mint === mint) || metaResponse.result[0]
-            : null;
-        } catch (error) {
-          logger.warn('Helius metadata lookup failed', { mint, error: error.message });
-        }
-      }
+      const metadata = await loadMetadata(mint);
 
       const holders = largest.map((entry, index) => {
         const rawBalance = Number(entry.amount || '0');
@@ -137,7 +72,7 @@ module.exports = (context) => {
       const supplyFloat = decimals > 0 ? totalSupply / 10 ** decimals : totalSupply;
       const concentration = supplyFloat > 0 ? top5Total / supplyFloat : 0;
 
-      return {
+      const result = {
         mint,
         supply: supplyFloat,
         decimals,
@@ -146,6 +81,9 @@ module.exports = (context) => {
         metadata,
         trendingScore: supplyFloat > 0 ? roundTo((1 - concentration) * 100, 2) : null,
       };
+
+      cache.set(cacheKey, result);
+      return result;
     } catch (error) {
       logger.error('Failed to fetch token intel from Helius', { error: error.message, mint });
       return null;
@@ -158,7 +96,13 @@ module.exports = (context) => {
     }
 
     try {
-      const signatures = await rpcRequest('getSignaturesForAddress', [wallet, { limit }]);
+      const cacheKey = `wallet-activity:${wallet}:${limit}`;
+      const cached = cache.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const signatures = await rpc.request('getSignaturesForAddress', [wallet, { limit }]);
       const recentTrades = signatures?.length || 0;
       const blockTimes = (signatures || [])
         .map((entry) => entry.blockTime)
@@ -169,7 +113,7 @@ module.exports = (context) => {
         blockTimes.length > 1 ? (newest - oldest) / Math.max(blockTimes.length - 1, 1) / 3600 : null;
       const winRate = Math.min(0.9, Math.max(0.45, recentTrades / Math.max(limit, 1) * 0.75));
 
-      return {
+      const result = {
         wallet,
         recentTrades,
         lastSignature: signatures?.[0]?.signature || null,
@@ -179,8 +123,42 @@ module.exports = (context) => {
         avgProfitUsd: null,
         signatures: signatures || [],
       };
+
+      cache.set(cacheKey, result, context.config.cache.ttlMs / 2);
+      return result;
     } catch (error) {
       logger.error('Failed to fetch wallet activity from Helius', { error: error.message, wallet });
+      return null;
+    }
+  }
+
+  async function loadMetadata(mint) {
+    if (!config.apiKey) {
+      return null;
+    }
+
+    const cacheKey = `metadata:${mint}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    try {
+      const metaResponse = await rest.request('v1/token-metadata', {
+        body: {
+          mintAccounts: [mint],
+          includeOffChain: true,
+        },
+      });
+
+      const metadata = Array.isArray(metaResponse?.result)
+        ? metaResponse.result.find((entry) => entry?.mint === mint) || metaResponse.result[0]
+        : null;
+
+      cache.set(cacheKey, metadata, context.config.cache.ttlMs * 2);
+      return metadata;
+    } catch (error) {
+      logger.warn('Helius metadata lookup failed', { mint, error: error.message });
       return null;
     }
   }
@@ -191,16 +169,3 @@ module.exports = (context) => {
     getWalletActivity,
   };
 };
-
-function ensureTrailingSlash(url) {
-  if (!url.endsWith('/')) {
-    return `${url}/`;
-  }
-  return url;
-}
-
-function roundTo(value, decimals = 2) {
-  if (value === null || value === undefined) return null;
-  const factor = 10 ** decimals;
-  return Math.round(value * factor) / factor;
-}

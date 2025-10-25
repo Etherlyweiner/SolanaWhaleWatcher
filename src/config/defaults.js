@@ -2,13 +2,10 @@ const path = require('path');
 
 const cacheDir = path.resolve(__dirname, '..', '..', 'data', 'cache');
 
-const heliusRpcUrl =
-  process.env.HELIUS_RPC_URL ||
-  process.env.SOLANA_RPC_URL ||
-  'https://mainnet.helius-rpc.com/?api-key=ad42d0ce-6fe3-4005-8c2c-2d8debc7d0f8';
+const heliusRpcUrl = process.env.HELIUS_RPC_URL || process.env.SOLANA_RPC_URL || null;
 
 const heliusRestUrl = process.env.HELIUS_REST_URL || 'https://api.helius.xyz';
-const heliusApiKey = process.env.HELIUS_API_KEY || 'f26c6485-96ad-4f9b-9a8f-9d2da59a2394';
+const heliusApiKey = process.env.HELIUS_API_KEY || null;
 const nansenWatchlist = parseCsv(process.env.NANSEN_WATCHLIST);
 
 module.exports = {
@@ -28,31 +25,32 @@ module.exports = {
       rpcUrl: heliusRpcUrl,
       restUrl: heliusRestUrl,
       apiKey: heliusApiKey,
-      maxRetries: parseInt(process.env.HELIUS_MAX_RETRIES || '3', 10),
-      baseRetryMs: parseInt(process.env.HELIUS_BASE_RETRY_MS || '250', 10),
+      ...buildRetryConfig('HELIUS', { retries: 3, baseDelayMs: 250 }),
     },
     gmgn: {
       enabled: true,
-      maxRetries: parseInt(process.env.GMGN_MAX_RETRIES || '2', 10),
-      baseRetryMs: parseInt(process.env.GMGN_BASE_RETRY_MS || '200', 10),
+      ...buildRetryConfig('GMGN', { retries: 2, baseDelayMs: 200 }),
     },
     dexscreener: {
       enabled: true,
-      baseUrl: process.env.DEXSCREENER_BASE_URL || 'https://api.dexscreener.com/latest/dex',
-      maxRetries: parseInt(process.env.DEXSCREENER_MAX_RETRIES || '2', 10),
-      baseRetryMs: parseInt(process.env.DEXSCREENER_BASE_RETRY_MS || '250', 10),
+      baseUrl: process.env.DEXSCREENER_BASE_URL || 'https://api.dexscreener.com',
+      defaultChainId: process.env.DEXSCREENER_CHAIN_ID || 'solana',
+      cacheTtlMs: parseInt(process.env.DEXSCREENER_CACHE_TTL_MS || '15000', 10),
+      retry: {
+        attempts: parseInt(process.env.DEXSCREENER_RETRY_ATTEMPTS || '3', 10),
+        baseDelayMs: parseInt(process.env.DEXSCREENER_RETRY_BASE_DELAY_MS || '250', 10),
+        jitterMs: parseInt(process.env.DEXSCREENER_RETRY_JITTER_MS || '300', 10),
+      },
     },
     nansen: {
       enabled: true,
-      maxRetries: parseInt(process.env.NANSEN_MAX_RETRIES || '2', 10),
-      baseRetryMs: parseInt(process.env.NANSEN_BASE_RETRY_MS || '250', 10),
+      ...buildRetryConfig('NANSEN', { retries: 2, baseDelayMs: 250 }),
       watchlist: nansenWatchlist,
     },
     pumpfun: {
       enabled: true,
       baseUrl: process.env.PUMPFUN_BASE_URL || 'https://pump.fun/api',
-      maxRetries: parseInt(process.env.PUMPFUN_MAX_RETRIES || '2', 10),
-      baseRetryMs: parseInt(process.env.PUMPFUN_BASE_RETRY_MS || '250', 10),
+      ...buildRetryConfig('PUMPFUN', { retries: 2, baseDelayMs: 250 }),
     },
   },
   risk: {
@@ -67,6 +65,7 @@ module.exports = {
     ttlMs: 5 * 60 * 1000,
   },
   reporting: {
+    enabled: process.env.REPORTING_ENABLED !== 'false',
     journalFile: path.resolve(__dirname, '..', '..', 'reports', 'journal.json'),
     exportDir: path.resolve(__dirname, '..', '..', 'reports'),
   },
@@ -78,4 +77,17 @@ function parseCsv(value) {
     .split(',')
     .map((entry) => entry.trim())
     .filter(Boolean);
+}
+
+function buildRetryConfig(prefix, defaults = {}) {
+  const retriesEnv = process.env[`${prefix}_MAX_RETRIES`];
+  const baseDelayEnv = process.env[`${prefix}_BASE_RETRY_MS`];
+
+  const retries = retriesEnv != null ? Number.parseInt(retriesEnv, 10) : defaults.retries;
+  const baseDelayMs = baseDelayEnv != null ? Number.parseInt(baseDelayEnv, 10) : defaults.baseDelayMs;
+
+  return {
+    maxRetries: Number.isFinite(retries) ? retries : defaults.retries ?? 0,
+    baseRetryMs: Number.isFinite(baseDelayMs) ? baseDelayMs : defaults.baseDelayMs ?? 0,
+  };
 }

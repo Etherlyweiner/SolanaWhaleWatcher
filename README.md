@@ -36,13 +36,33 @@ Create a `.env` file in the project root (optional but recommended):
 ```env
 HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
 HELIUS_API_KEY=YOUR_HELIUS_REST_API_KEY
+
+# Dexscreener
+DEXSCREENER_BASE_URL=https://api.dexscreener.com
+DEXSCREENER_CHAIN_ID=solana
+DEXSCREENER_CACHE_TTL_MS=15000
+DEXSCREENER_RETRY_ATTEMPTS=3
+
+# Reporting & Persistence
+REPORTING_ENABLED=true
+
+# Nansen Watchlist
 NANSEN_WATCHLIST=Wallet1,Wallet2
+
+# Risk & Bankroll Defaults
 DEFAULT_TOKEN_MINT=So11111111111111111111111111111111111111112
 MAX_POSITION_PERCENT=0.02
 STOP_LOSS_PERCENT=0.08
 TAKE_PARTIAL_PERCENT=1.0
 DEFAULT_BANKROLL=5000
 ```
+
+**Key Configuration Options:**
+
+- `REPORTING_ENABLED`: Controls whether analysis results are journaled to `reports/journal.json` and holder snapshots are exported. Set to `false` to disable persistence.
+- `DEXSCREENER_*`: Configure Dexscreener API integration for momentum/grid strategies.
+- `MAX_POSITION_PERCENT`: Maximum percentage of bankroll to risk on a single trade (default: 2%).
+- `STOP_LOSS_PERCENT`: Hard stop-loss threshold (default: 8%).
 
 ### Run the CLI
 
@@ -63,6 +83,49 @@ Common options:
 - `--json`: emit raw JSON output.
 - `--interval=<seconds>`: refresh cadence for stream mode.
 
+### Sample CLI Output
+
+```text
+=== Solana Whale Watcher 2.0 ===
+Token: BONK
+Price (approx): 0.00001234 USD
+Top Holders Analyzed: 25
+
+Leaderboard (Top 10 with Δ balance):
+  #1 7xKX...abc1 – balance: 1500000.00 (Δ +50000.00, prev #1)
+  #2 9pQw...def2 – balance: 1200000.00 (Δ -10000.00, prev #2)
+  #3 5tYu...ghi3 – balance: 950000.00 (Δ n/a, prev new)
+  ...
+
+--- Sniper Trading ---
+Narrative: Detected 2 promising Pump.fun listings with low rug scores.
+Risk Notes: Execute through MEV-protected wallets; Size entries at 1–2% bankroll
+Signals:
+  1. PumpToken – launched 8.5m ago
+     Liquidity and ownership checks look acceptable.
+     mint: 6gHj...xyz9
+     liquidityUsd: $12,500.00
+```
+
+### Running Tests
+
+The project includes a comprehensive test suite covering providers, strategies, risk management, and integration scenarios.
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test file
+npm test tests/providers/dexscreenerProvider.test.js
+```
+
+**Test Coverage:**
+- Provider caching and API integration (Helius, Dexscreener)
+- Strategy output validation (all 4 strategies)
+- Risk manager calculations (position sizing, stops, targets)
+- Full analyze pipeline integration
+- CLI rendering safety
+
 ## Project Structure
 
 ```text
@@ -76,6 +139,12 @@ src/
 ├── risk/              # Risk manager enforcing bankroll rules
 ├── strategies/        # Strategy evaluators returning signals
 └── util/              # Shared helpers (logging, numbers, etc.)
+tests/
+├── core/              # App and CLI tests
+├── integration/       # End-to-end pipeline tests
+├── providers/         # Provider caching and API tests
+├── risk/              # Risk manager unit tests
+└── strategies/        # Strategy output validation
 ```
 
 ## Extending
@@ -89,10 +158,11 @@ src/
 ## Data & Caching
 
 - Default holder data is loaded from the original JSON exports (`holdersbalances.json`, `output3.json`).
-- New snapshots are written to `data/cache/` (created automatically).
+- New snapshots are written to `data/cache/holders/` with history management (keeps latest 10 per token).
+- When `REPORTING_ENABLED=true`, analysis results are journaled to `reports/journal.json` and snapshots exported to `reports/`.
 - Live integrations:
   - **Helius RPC + REST** for token supply, metadata, wallet activity.
-  - **Dexscreener** for market/volume metrics.
+  - **Dexscreener** for market/volume metrics, momentum signals.
   - **Pump.fun** for recent launch discovery.
   - **Nansen emulation** uses `NANSEN_WATCHLIST` wallets and Helius activity metrics.
 

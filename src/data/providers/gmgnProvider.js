@@ -1,9 +1,18 @@
 'use strict';
 
+const { TtlCache } = require('../../util/cache');
+
 module.exports = (context) => {
   const logger = context.logger.child('provider:gmgn');
+  const cache = new TtlCache({ ttlMs: context.config.providers.gmgn.cacheTtlMs ?? context.config.cache.ttlMs });
 
   async function getTokenIntel(mint, options = {}) {
+    const cacheKey = `intel:${mint}:${options.holderLimit || 20}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cloneIntel(cached);
+    }
+
     try {
       const helius = context.services.heliusProvider;
       const intel = await helius.getTokenIntel(mint, {
@@ -20,7 +29,7 @@ module.exports = (context) => {
       const rugCheckScore = typeof concentration === 'number' ? Number((1 - concentration).toFixed(3)) : null;
       const trendingScore = typeof concentration === 'number' ? Number(((1 - concentration) * 100).toFixed(2)) : null;
 
-      return {
+      const payload = {
         mint,
         metadata: metadata || {},
         holders,
@@ -34,6 +43,9 @@ module.exports = (context) => {
             ? Number(((1 - concentration) * 0.75 + 0.25).toFixed(2))
             : null,
       };
+
+      cache.set(cacheKey, payload);
+      return cloneIntel(payload);
     } catch (error) {
       logger.error('Failed to gather token intel', { error: error.message, mint });
       return null;
@@ -41,6 +53,12 @@ module.exports = (context) => {
   }
 
   async function getWhaleWallets(mint, options = {}) {
+    const cacheKey = `whales:${mint}:${options.holderLimit || 20}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached.map((entry) => ({ ...entry }));
+    }
+
     try {
       const intel = await getTokenIntel(mint, options);
       if (!intel?.holders?.length) {
@@ -49,7 +67,7 @@ module.exports = (context) => {
 
       const seen = new Set();
 
-      return intel.holders
+      const whales = intel.holders
         .map((holder, index) => {
           const walletAddress = holder.wallet || holder.tokenAccount;
           if (!walletAddress) {
@@ -69,6 +87,9 @@ module.exports = (context) => {
           };
         })
         .filter(Boolean);
+
+      cache.set(cacheKey, whales, context.config.providers.gmgn.cacheTtlMs ?? context.config.cache.ttlMs / 2);
+      return whales.map((entry) => ({ ...entry }));
     } catch (error) {
       logger.error('Failed to derive whale wallets', { error: error.message, mint });
       return [];
@@ -80,6 +101,16 @@ module.exports = (context) => {
     getWhaleWallets,
   };
 };
+
+function cloneIntel(intel) {
+  return intel
+    ? {
+        ...intel,
+        metadata: { ...(intel.metadata || {}) },
+        holders: Array.isArray(intel.holders) ? intel.holders.map((holder) => ({ ...holder })) : [],
+      }
+    : null;
+}
 
 function deriveSocialBuzz(holderCount) {
   if (holderCount > 5000) return 'viral';
