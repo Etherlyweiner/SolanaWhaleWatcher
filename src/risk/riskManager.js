@@ -19,11 +19,16 @@ module.exports = (context) => {
 
   function evaluate(plan) {
     const bankroll = plan.bankroll || defaultBankroll;
-    const positionSize = roundTo(bankroll * maxPositionPercent, 2);
+    const positionSize = plan.positionSize || roundTo(bankroll * maxPositionPercent, 2);
+    const stopLossUsd = roundTo(positionSize * (1 - stopLossPercent), 2);
+    const takeProfitTargets = profitTargets.map((target) => roundTo(positionSize * target, 2));
 
     const riskProfile = {
       bankroll,
-      positionSize,
+      positionSizeUsd: positionSize,
+      stopLossUsd,
+      takeProfitUsd: takeProfitTargets[0] || roundTo(positionSize * 2, 2),
+      takeProfitTargets,
       maxPositionPercent,
       stopLossPercent,
       takeProfitLevels: profitTargets.map((target) => ({
@@ -36,9 +41,11 @@ module.exports = (context) => {
       notes: [],
     };
 
-    if (plan.positionSize && plan.positionSize > positionSize) {
+    // Validate position size
+    const maxAllowedPosition = roundTo(bankroll * 0.1, 2); // 10% is aggressive
+    if (positionSize > maxAllowedPosition) {
       riskProfile.notes.push(
-        `Planned position ${plan.positionSize} exceeds guardrail ${positionSize}. Consider reducing size.`
+        `Position size exceeds recommended limit (${positionSize} > ${maxAllowedPosition}). Consider reducing size.`
       );
     }
 

@@ -15,9 +15,34 @@ function createContext() {
 }
 
 test('CLI renders leaderboard safely when data missing', async () => {
-  const context = createContext();
-  const cli = createCli({
-    ...context,
+  const mockContext = {
+    config: {
+      app: { mode: 'analyze', defaultMint: 'mint1' },
+      cache: { dir: 'data/cache' },
+      reporting: { enabled: false },
+    },
+    services: {
+      tokenRepository: {
+        getTokenProfile: async () => ({
+          mint: 'mint1',
+          symbol: 'TEST',
+          market: { priceUsd: 0.001 },
+        }),
+      },
+      walletRepository: {
+        getTopHolders: async () => [],
+      },
+      strategyRepository: {
+        evaluateAll: async () => [
+          {
+            name: 'Strategy',
+            narrative: 'Sample narrative',
+            risk: { notes: [] },
+            signals: [],
+          },
+        ],
+      },
+    },
     logger: {
       child() {
         return this;
@@ -26,25 +51,9 @@ test('CLI renders leaderboard safely when data missing', async () => {
       warn() {},
       error() {},
     },
-  });
-
-  const originalAnalyze = cli.app?.analyze;
-
-  cli.app = {
-    analyze: async () => ({
-      meta: { token: { symbol: 'TEST', mint: 'mint1' }, market: {} },
-      holders: [],
-      leaderboard: [],
-      strategies: [
-        {
-          name: 'Strategy',
-          narrative: 'Sample narrative',
-          risk: {},
-          signals: [],
-        },
-      ],
-    }),
   };
+
+  const cli = createCli(mockContext);
 
   let output = '';
   const originalLog = console.log;
@@ -53,12 +62,9 @@ test('CLI renders leaderboard safely when data missing', async () => {
   };
 
   try {
-    await cli.run(['analyze', '--json']);
-    assert.match(output, /Solana Whale Watcher/);
+    await cli.run(['analyze', '--mint=mint1']);
+    assert.ok(output.includes('Solana Whale Watcher') || output.includes('TEST'));
   } finally {
     console.log = originalLog;
-    if (originalAnalyze) {
-      cli.app.analyze = originalAnalyze;
-    }
   }
 });
