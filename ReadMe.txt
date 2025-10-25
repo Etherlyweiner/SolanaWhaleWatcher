@@ -1,7 +1,7 @@
 Thank you for checking out my program!
 * Developer for hire - specializing in old school CLI *
 * Custom work avilable send inquiries @ParmsCrypto *
-* Solana Donation Account: CGvMJVAFpiLjMDH3cXrbbVQ91m3KgZvVwRCoACRfYG5G *
+* 
 
 Motivation for this program is dedicated to the good people at ARB Protocol.
 You can check them out at https://github.com/ARBProtocol   https://twitter.com/ArbProtocol
