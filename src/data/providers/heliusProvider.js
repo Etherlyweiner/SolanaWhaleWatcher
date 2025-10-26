@@ -158,7 +158,7 @@ module.exports = (context) => {
       cache.set(cacheKey, metadata, context.config.cache.ttlMs * 2);
       return metadata;
     } catch (error) {
-      logger.warn('Helius metadata lookup failed', { mint, error: error.message });
+      logger.debug('Helius metadata unavailable (rate limit or API key issue)', { mint, error: error.message });
       return null;
     }
   }

@@ -56,7 +56,7 @@ module.exports = (context) => {
 
       return cloneLaunches(normalized);
     } catch (error) {
-      logger.error('Pump.fun launch fetch failed', { error: error.message });
+      logger.debug('Pump.fun API unavailable (optional, using Dexscreener)', { error: error.message });
       return [];
     }
   }
