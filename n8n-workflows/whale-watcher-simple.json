@@ -1,0 +1,53 @@
+{
+  "name": "Whale Watcher - Simple Alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whale-watcher",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-node-001",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "whale-watcher"
+    },
+    {
+      "parameters": {
+        "url": "https://discord.com/api/webhooks/1431797095727104073/ZDggdyXCxmLSLm6BFa6SCUH-Xgp10C_QfaoBHFqk2KZnvNi34KtZuTceq9TMpO4qCEbQ",
+        "content": "=🐋 **Whale Watcher Alert**\n\n**Token**: {{ $json.symbol || 'Unknown' }}\n**Score**: {{ $json.score }}/100\n**Mint**: `{{ $json.mint }}`\n\n{{ $json.reasons ? '**Why:**\\n• ' + $json.reasons.join('\\n• ') : '' }}\n\n🔗 https://dexscreener.com/solana/{{ $json.mint }}",
+        "options": {}
+      },
+      "id": "discord-node-001",
+      "name": "Send to Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send to Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["solana", "whale-watcher", "trading"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-25T00:00:00.000Z",
+  "versionId": "1"
+}

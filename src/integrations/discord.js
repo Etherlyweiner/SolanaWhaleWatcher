@@ -2,7 +2,7 @@
 
 const https = require('https');
 const { URL } = require('url');
-const logger = require('../core/logger');
+const logger = require('../util/logger');
 
 /**
  * Discord Webhook Integration
@@ -12,7 +12,7 @@ const logger = require('../core/logger');
 class DiscordNotifier {
   constructor(webhookUrl) {
     this.webhookUrl = webhookUrl;
-    this.log = logger.child({ ns: 'integrations:discord' });
+    this.log = logger('integrations:discord');
     this.enabled = !!webhookUrl;
   }
 

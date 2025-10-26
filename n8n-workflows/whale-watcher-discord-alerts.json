@@ -1,0 +1,82 @@
+{
+  "name": "Whale Watcher - Discord Alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whale-watcher",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f6f0b0e2-8c5a-4d3a-9e1f-3b2c8d7a1234",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "whale-watcher"
+    },
+    {
+      "parameters": {
+        "url": "https://discord.com/api/webhooks/1431797095727104073/ZDggdyXCxmLSLm6BFa6SCUH-Xgp10C_QfaoBHFqk2KZnvNi34KtZuTceq9TMpO4qCEbQ",
+        "content": "=🎯 **Profitable Token Detected!**\n\n**Symbol**: {{ $json.symbol || 'Unknown' }}\n**Score**: {{ $json.score || 0 }}/100\n**Mint Address**: `{{ $json.mint }}`\n\n**Analysis**:\n{{ $json.reasons ? $json.reasons.join('\\n• ') : 'No reasons provided' }}\n\n**Whale Activity**:\n• Top Holder: {{ $json.topHolder || 'N/A' }}%\n• Whale Count: {{ $json.whaleCount || 'N/A' }}\n• Market Cap: ${{ $json.marketCap || 'N/A' }}\n\n**Strategy Recommendations**:\n{{ $json.strategies ? Object.entries($json.strategies).map(([name, data]) => `• ${name}: ${data.verdict} (${data.reasoning})`).join('\\n') : 'Analyzing...' }}\n\n🔗 **DEX Screener**: https://dexscreener.com/solana/{{ $json.mint }}\n⏰ **Detected**: {{ new Date().toLocaleString() }}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "name": "Discord Notification",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.score }}",
+              "operation": "larger",
+              "value2": 75
+            }
+          ]
+        }
+      },
+      "id": "b2c3d4e5-6f7g-8h9i-0j1k-l2m3n4o5p6q7",
+      "name": "High Score Filter",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [350, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "High Score Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Score Filter": {
+      "main": [
+        [
+          {
+            "node": "Discord Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-25T00:00:00.000Z",
+  "versionId": "1"
+}

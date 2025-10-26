@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('./logger');
+const logger = require('../util/logger');
 
 /**
  * Autonomous Token Scanner
@@ -30,7 +30,7 @@ const SCAN_CRITERIA = {
 class TokenScanner {
   constructor(context) {
     this.context = context;
-    this.log = logger.child({ ns: 'core:scanner' });
+    this.log = logger('core:scanner');
     this.flaggedTokens = new Map();  // mint -> scan result
     this.scanInterval = null;
   }
