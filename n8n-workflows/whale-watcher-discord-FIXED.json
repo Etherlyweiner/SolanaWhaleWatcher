@@ -22,7 +22,7 @@
             {
               "value1": "={{ $json.body.score }}",
               "operation": "larger",
-              "value2": 60
+              "value2": 20
             }
           ]
         }

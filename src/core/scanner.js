@@ -274,7 +274,7 @@ class TokenScanner {
    */
   async fetchHolderData(mint) {
     try {
-      const holders = await this.context.loaders.solana.loadHolders(mint);
+      const holders = await this.context.services.solanaLoader.getTokenHolders(mint);
       if (!holders || holders.length === 0) return null;
 
       const top5 = holders.slice(0, 5);
@@ -298,7 +298,7 @@ class TokenScanner {
    */
   async fetchMarketData(mint) {
     try {
-      const market = await this.context.providers.dexscreener.getTokenData(mint);
+      const market = await this.context.services.dexscreenerProvider.getMarketData(mint);
       if (!market) return null;
 
       return {
@@ -319,7 +319,7 @@ class TokenScanner {
    */
   async fetchLaunchData(mint) {
     try {
-      const launches = await this.context.providers.pumpfun.getRecentLaunches();
+      const launches = await this.context.services.pumpfunProvider.getRecentLaunches();
       const launch = launches.find(l => l.mint === mint);
       if (!launch) return null;
 
