@@ -19,9 +19,14 @@ module.exports = (context) => {
           }));
         }
       }
-      logger.warn('Helius did not return holders; falling back to cached JSON', { mint });
+      logger.debug('Helius did not return holders; using fallback', { mint });
     } catch (error) {
-      logger.error('Helius token holder fetch failed; falling back', { error: error.message, mint });
+      // Many tokens don't have SPL holder data - this is normal
+      if (error.code === -32602 || error.message?.includes('not a Token mint')) {
+        logger.debug('Token has no holder data (normal for non-SPL tokens)', { mint });
+      } else {
+        logger.warn('Helius token holder fetch failed; using fallback', { error: error.message, mint });
+      }
     }
 
     try {

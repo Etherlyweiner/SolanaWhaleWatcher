@@ -251,8 +251,8 @@ class TokenScanner {
       }
     }
 
-    // Decision: Flag if score >= 60 (at least 3-4 criteria met)
-    const meets_criteria = score >= 60;
+    // Decision: Flag if score >= 20 (matches N8N workflow threshold)
+    const meets_criteria = score >= 20;
 
     return {
       mint,
