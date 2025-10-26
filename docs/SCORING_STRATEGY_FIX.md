@@ -11,22 +11,27 @@
 ### Current Problems
 
 **1. Helius RPC Errors:**
+
 ```
 "Invalid param: not a Token mint"
 ```
+
 - Many Solana tokens aren't SPL tokens with holder data
 - Helius RPC fails on these tokens
 - Scanner treats this as error instead of expected behavior
 
 **2. Pump.fun Completely Down:**
+
 ```
 HTTP 404 Not Found
 ```
+
 - API unavailable (probably changed endpoints)
 - No launch data available
 - 0/45 possible points lost
 
 **3. Weak Scoring:**
+
 ```
 Current maximum: 20-30 points
 Threshold: 20 points (from N8N)
@@ -34,6 +39,7 @@ BUT code checks: score >= 60 ❌ MISMATCH!
 ```
 
 **4. Score Breakdown:**
+
 - Whale concentration: 25 pts ⚠️ (rarely works)
 - Whale accumulation: 20 pts ⚠️ (rarely works)
 - Rug score: 20 pts ❌ (never works - no Pump.fun)
@@ -53,16 +59,19 @@ BUT code checks: score >= 60 ❌ MISMATCH!
 
 **1. Change Internal Threshold**
 Current code:
+
 ```javascript
 const meets_criteria = score >= 60;  // ❌ TOO HIGH!
 ```
 
 Should be:
+
 ```javascript
 const meets_criteria = score >= 20;  // ✅ Matches N8N
 ```
 
 **2. Make Helius Errors Silent**
+
 ```javascript
 // Catch "not a Token mint" specifically
 catch (error) {
@@ -75,6 +84,7 @@ catch (error) {
 ```
 
 **3. Disable Pump.fun Completely**
+
 ```javascript
 // In scanner.js - just skip it
 async fetchLaunchData(mint) {
@@ -88,21 +98,25 @@ async fetchLaunchData(mint) {
 **New Scoring System (0-100 points):**
 
 **Market Momentum (40 points):**
+
 - Strong 24h volume (>$50k): 15 pts
 - Massive volume (>$500k): +10 pts (25 total)
 - Volume spike (4x+): 15 pts
 
 **Price Action (30 points):**
+
 - 1h price increase (>5%): 10 pts
 - 6h price increase (>20%): 10 pts
 - 24h price increase (>50%): 10 pts
 
 **Liquidity Health (20 points):**
+
 - Good liquidity (>$10k): 10 pts
 - Great liquidity (>$50k): +5 pts (15 total)
 - Liquidity locked: 5 pts
 
 **Freshness Bonus (10 points):**
+
 - Very new (<1 hour): 10 pts
 - New (<6 hours): 5 pts
 
@@ -117,6 +131,7 @@ async fetchLaunchData(mint) {
 **File:** `src/core/scanner.js` Line 255
 
 **Change:**
+
 ```javascript
 // OLD:
 const meets_criteria = score >= 60;
@@ -130,6 +145,7 @@ const meets_criteria = score >= 20; // Match N8N workflow threshold
 **File:** `src/data/providers/heliusRpcProvider.js`
 
 **Wrap getTokenIntel in better error handling:**
+
 ```javascript
 async getTokenIntel(mint, options = {}) {
   try {
@@ -157,6 +173,7 @@ async getTokenIntel(mint, options = {}) {
 **File:** `src/core/scanner.js`
 
 **Replace fetchLaunchData:**
+
 ```javascript
 async fetchLaunchData(mint) {
   // Pump.fun API is unavailable - skip entirely
@@ -171,6 +188,7 @@ async fetchLaunchData(mint) {
 **File:** `src/core/scanner.js`
 
 **New evaluateCandidate function:**
+
 ```javascript
 async evaluateCandidate(candidate) {
   const { mint } = candidate;
@@ -288,7 +306,8 @@ async evaluateCandidate(candidate) {
 
 ## 📊 NEW SCORING EXAMPLES
 
-### Good Token Example:
+### Good Token Example
+
 ```
 Volume: $150k (15 pts)
 Volume spike: 6x (15 pts)
@@ -299,7 +318,8 @@ Age: 45 min (10 pts)
 Total: 60/100 points ✅ Strong alert!
 ```
 
-### Decent Token Example:
+### Decent Token Example
+
 ```
 Volume: $75k (15 pts)
 6h price: +25% (10 pts)
@@ -308,7 +328,8 @@ Liquidity: $15k (10 pts)
 Total: 35/100 points ✅ Alert (above 20 threshold)
 ```
 
-### Weak Token (No Alert):
+### Weak Token (No Alert)
+
 ```
 Volume: $25k (0 pts)
 Price: +2% (0 pts)
@@ -322,24 +343,28 @@ Total: 0/100 points ❌ No alert (correct!)
 ## 🎯 BENEFITS OF NEW STRATEGY
 
 ### Reliability ✅
+
 - **100% based on working data source** (Dexscreener)
 - No dependence on failing APIs
 - No "not a Token mint" errors
 - Clean logs
 
 ### Better Scoring ✅
+
 - **0-100 point scale** fully utilized
 - Multiple ways to score high
 - Rewards actual market activity
 - Catches momentum plays
 
 ### Easier Tuning ✅
+
 - Threshold: 20-40 for conservative
 - Threshold: 10-20 for aggressive
 - All based on real, available data
 - Can adjust weights easily
 
 ### Catches Real Opportunities ✅
+
 - **High volume** = real interest
 - **Price pumping** = momentum
 - **Good liquidity** = tradeable
@@ -349,14 +374,16 @@ Total: 0/100 points ❌ No alert (correct!)
 
 ## 🚀 IMPLEMENTATION ORDER
 
-### IMMEDIATE (Next 15 minutes):
+### IMMEDIATE (Next 15 minutes)
 
 1. **Fix internal threshold** (Line 255 in scanner.js)
+
    ```javascript
    const meets_criteria = score >= 20;
    ```
 
 2. **Silence Helius errors** (heliusRpcProvider.js)
+
    ```javascript
    if (error.code === -32602 || error.message?.includes('not a Token mint')) {
      logger.debug('Token has no SPL holder data (normal)', { mint });
@@ -365,13 +392,14 @@ Total: 0/100 points ❌ No alert (correct!)
    ```
 
 3. **Disable Pump.fun** (scanner.js fetchLaunchData)
+
    ```javascript
    return null; // Skip entirely
    ```
 
 4. **Restart scanner** - Errors should stop!
 
-### NEXT (30-60 minutes):
+### NEXT (30-60 minutes)
 
 5. **Implement new scoring algorithm**
    - Replace evaluateCandidate function
@@ -387,13 +415,15 @@ Total: 0/100 points ❌ No alert (correct!)
 
 ## 📈 EXPECTED RESULTS
 
-### After Quick Fix (Steps 1-4):
+### After Quick Fix (Steps 1-4)
+
 - ✅ No more Helius errors in logs
 - ✅ No more Pump.fun 404s
 - ✅ Alerts start appearing (matches threshold)
 - ⚠️ Still weak scoring (20-30 pts max)
 
-### After Full Fix (Steps 5-6):
+### After Full Fix (Steps 5-6)
+
 - ✅ Clean logs (DEBUG only)
 - ✅ Smart scoring (0-100 range)
 - ✅ Quality alerts (good tokens score 40-80)
@@ -404,16 +434,19 @@ Total: 0/100 points ❌ No alert (correct!)
 ## 🎯 BOTTOM LINE
 
 **Current Problem:**
+
 - Code requires 60 points
 - Maximum possible: 20 points
 - Result: **ZERO ALERTS EVER** ❌
 
 **Quick Fix:**
+
 - Change threshold to 20
 - Silence expected errors
 - Result: **ALERTS START WORKING** ✅
 
 **Full Fix:**
+
 - Redesign scoring for Dexscreener
 - Utilize full 0-100 scale
 - Result: **SMART, QUALITY ALERTS** 🎯

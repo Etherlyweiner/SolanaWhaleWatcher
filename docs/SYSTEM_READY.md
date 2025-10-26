@@ -23,12 +23,14 @@
 ## 📊 WHAT'S HAPPENING NOW
 
 ### Scanner Activity
+
 - **Status**: Active and scanning every 60 seconds
 - **Candidates Found**: 22 tokens per cycle
 - **Data Source**: Dexscreener (primary)
 - **Evaluation**: Running on all candidates
 
 ### Expected Behavior
+
 - Tokens scoring > 20 will trigger N8N
 - N8N will send to Discord
 - **First alert expected within 1-5 minutes**
@@ -38,7 +40,9 @@
 ## 🔍 HOW TO MONITOR
 
 ### 1. Scanner Logs (PowerShell Window)
+
 **Watch for:**
+
 ```json
 "candidates": 22
 "flagged": 0    ← Waiting for score > 20
@@ -46,14 +50,18 @@
 ```
 
 ### 2. N8N Executions
-**URL**: http://localhost:5678
+
+**URL**: <http://localhost:5678>
+
 - Click "Executions" in left sidebar
 - Green checkmark = Success
 - Click execution to see data
 
 ### 3. Discord Channel
+
 **Watch for**: "Whale watcher bot" messages
 **Expected format**:
+
 ```
 🎯 Profitable Token Detected!
 
@@ -83,18 +91,21 @@ You may see these in scanner logs - **they're NORMAL**:
 
 ## 🎯 SUCCESS INDICATORS
 
-### You'll Know It's Working When:
+### You'll Know It's Working When
 
 **Scanner Window Shows:**
+
 ```json
 "flagged": 1
 ```
 
 **N8N Shows:**
+
 - New execution with green checkmark
 - Timestamp matches scanner log
 
 **Discord Shows:**
+
 - New message from "Whale watcher bot"
 - Token information populated
 - Real mint address shown
@@ -106,16 +117,19 @@ You may see these in scanner logs - **they're NORMAL**:
 ### How Tokens Are Evaluated (Max 100 points)
 
 **Market Momentum** (20 points max)
+
 - ✅ Strong volume: +10 points
 - ✅ Volume spike: +10 points
 - **Status**: WORKING
 
 **Whale Activity** (45 points max)
+
 - ⚠️ Whale concentration: +25 points
 - ⚠️ Whales accumulating: +20 points
 - **Status**: Limited by rate limits
 
 **Launch Characteristics** (45 points max)
+
 - ❌ Low rug score: +20 points
 - ❌ High liquidity: +15 points
 - ❌ Low team share: +10 points
@@ -128,28 +142,33 @@ With current data availability, tokens typically score 10-30 points (mostly from
 
 ## 🔧 IF NO ALERTS AFTER 10 MINUTES
 
-### Troubleshooting Steps:
+### Troubleshooting Steps
 
 **1. Check Scanner**
+
 ```powershell
 # Look at PowerShell window
 # Should see: "candidates": 22, "flagged": X
 ```
 
 **2. Check N8N**
-- Open: http://localhost:5678
+
+- Open: <http://localhost:5678>
 - Click "Executions"
 - Any green checkmarks?
 
 **3. Check Workflow Active**
-- Open: http://localhost:5678
+
+- Open: <http://localhost:5678>
 - Click "Workflows"
 - Verify "FIXED" workflow has green toggle
 
 **4. Test Manually**
+
 ```powershell
 node test-with-real-token.js
 ```
+
 Should return 200 OK and show alert in Discord
 
 ---
@@ -157,6 +176,7 @@ Should return 200 OK and show alert in Discord
 ## 🚀 NEXT STEPS
 
 ### Right Now (Next 10 minutes)
+
 1. ✅ Keep scanner window open
 2. ✅ Keep Discord open
 3. ✅ Watch for `"flagged": 1` in logs
@@ -164,12 +184,14 @@ Should return 200 OK and show alert in Discord
 5. 🎉 Celebrate when it arrives!
 
 ### After First Alert
+
 1. Review alert quality
 2. Adjust threshold if needed (higher/lower)
 3. Monitor for patterns
 4. Document interesting tokens
 
 ### This Weekend
+
 1. Add more data sources (GMGN, Nansen)
 2. Implement better caching
 3. Create status dashboard
@@ -182,23 +204,27 @@ Should return 200 OK and show alert in Discord
 ### What Your System Can Do Right Now
 
 **Token Discovery**
+
 - ✅ Scan latest Solana tokens from Dexscreener
 - ✅ Filter for valid mint addresses
 - ✅ Process 20-30 tokens per cycle
 
 **Token Evaluation**
+
 - ✅ Market data analysis (price, volume, liquidity)
 - ⚠️ Whale concentration (limited by rate limits)
 - ⚠️ Launch analysis (Pump.fun API down)
 - ✅ Scoring algorithm (0-100)
 
 **Alert System**
+
 - ✅ Automated webhook notifications
 - ✅ Discord integration
 - ✅ Rich formatted messages
 - ✅ Real-time delivery
 
 **Error Handling**
+
 - ✅ Multiple data source fallbacks
 - ✅ Rate limit management
 - ✅ Graceful degradation
@@ -211,17 +237,20 @@ Should return 200 OK and show alert in Discord
 **Overall Status**: 🟢 HEALTHY
 
 **Core Infrastructure**: 100% Operational
+
 - Docker: ✅ Running
 - N8N: ✅ Active
 - Scanner: ✅ Scanning
 - Webhook: ✅ Responding
 
 **Data Sources**: 70% Available
+
 - Dexscreener: ✅ Working
 - Helius: ⚠️ Rate limited
 - Pump.fun: ❌ API down
 
 **Alert Pipeline**: 100% Functional
+
 - N8N workflow: ✅ Configured
 - Discord webhook: ✅ Tested
 - Data mapping: ✅ Fixed
@@ -231,18 +260,19 @@ Should return 200 OK and show alert in Discord
 ## 📞 QUICK REFERENCE
 
 **Scanner Window**: Should show regular scan cycles every 60s
-**N8N Dashboard**: http://localhost:5678
+**N8N Dashboard**: <http://localhost:5678>
 **Current Threshold**: 20 points
 **Expected Alert Time**: 1-10 minutes
 **Test Command**: `node test-with-real-token.js`
 
 ---
 
-## 🎉 YOU'RE READY!
+## 🎉 YOU'RE READY
 
 **Everything is configured and running!**
 
 Your automated Solana whale detection system is:
+
 - ✅ Finding tokens
 - ✅ Evaluating candidates
 - ✅ Ready to send alerts

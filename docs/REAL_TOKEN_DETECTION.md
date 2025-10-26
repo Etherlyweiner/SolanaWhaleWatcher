@@ -36,24 +36,28 @@ Every 60 seconds:
 ### Scanner Looks For
 
 **Whale Activity** ✅
+
 - Top 5 holders: 15-50% concentration
 - Accumulating whales (>5000 tokens)
 - Not team wallets
 - Active trading patterns
 
 **Market Health** ✅
+
 - Liquidity: > $10,000
 - Volume: > $50,000 (24h)
 - Price stability
 - Trading activity
 
 **Launch Quality** ✅
+
 - Age: < 15 minutes (fresh)
 - Team share: < 20%
 - Rug score: < 40%
 - Contract verified
 
 **Momentum** ✅
+
 - Volume spike: 2.5x+ ratio
 - RSI: 60-85 (not overbought)
 - Holder growth
@@ -83,21 +87,25 @@ Every 60 seconds:
 Scanner outputs JSON logs. Look for these key messages:
 
 **Scan Starting**:
+
 ```json
 {"ts":"2025-10-26T...","level":"info","ns":"core:scanner","msg":"Starting scan cycle"}
 ```
 
 **Token Found**:
+
 ```json
 {"ts":"2025-10-26T...","level":"info","ns":"core:scanner","msg":"🎯 TOKEN FLAGGED","mint":"ABC123...","symbol":"ROCKET","score":85}
 ```
 
 **Webhook Sent**:
+
 ```json
 {"ts":"2025-10-26T...","level":"info","ns":"core:scanner","msg":"Webhook notification sent","statusCode":200,"mint":"ABC123..."}
 ```
 
 **Scan Complete**:
+
 ```json
 {"ts":"2025-10-26T...","level":"info","ns":"core:scanner","msg":"Scan cycle complete","duration":"3521ms","candidates":12,"flagged":2}
 ```
@@ -165,6 +173,7 @@ Scanner outputs JSON logs. Look for these key messages:
 - **Very slow market**: May take several hours
 
 **Why the wait?**:
+
 - Scanner needs to find tokens meeting ALL criteria
 - Score must be > 75 (high quality bar)
 - Pump.fun launches vary by time of day
@@ -184,6 +193,7 @@ Get-Process node
 ### View Recent Logs
 
 Scanner logs appear in the terminal where it's running. Look for:
+
 - `Starting scan cycle` - Scan beginning
 - `TOKEN FLAGGED` - Found a candidate!
 - `Webhook notification sent` - Sent to N8N
@@ -226,6 +236,7 @@ npm run scan
 ### Step 3: Make Your Decision
 
 **This is information, not financial advice**. Use the alert as:
+
 - Starting point for research
 - Early warning system
 - Data for your strategy
@@ -244,15 +255,18 @@ npm run scan
 ### Expected Alert Frequency
 
 **High Activity Periods**:
+
 - 1-3 alerts per hour
 - More during US trading hours
 - Spikes during trending markets
 
 **Normal Periods**:
+
 - 1-3 alerts per 2-3 hours
 - Steady throughout day
 
 **Slow Periods**:
+
 - 1-3 alerts per 6-12 hours
 - Often late night/early morning
 
@@ -263,6 +277,7 @@ npm run scan
 ### No Alerts After 1 Hour?
 
 **Check**:
+
 1. Scanner still running: `Get-Process node`
 2. N8N container running: `docker ps`
 3. Workflow is Active in N8N
@@ -286,6 +301,7 @@ powershell -ExecutionPolicy Bypass -File test-webhook.ps1
 ### Too Many Alerts?
 
 Increase the score threshold in N8N:
+
 1. Open workflow in N8N
 2. Click "High Score Filter" node
 3. Change `75` to `80` or `85`
@@ -294,6 +310,7 @@ Increase the score threshold in N8N:
 ### Too Few Alerts?
 
 Decrease the score threshold:
+
 1. Open workflow in N8N
 2. Click "High Score Filter" node
 3. Change `75` to `70` or `65`
@@ -318,6 +335,7 @@ npm run scan -- --interval=120
 ### Adjust Score Threshold
 
 Edit N8N workflow "High Score Filter" node:
+
 - **More selective**: Increase to 80-85
 - **More alerts**: Decrease to 65-70
 - **Current**: 75 (recommended)
@@ -325,6 +343,7 @@ Edit N8N workflow "High Score Filter" node:
 ### Monitor Multiple Channels
 
 Create multiple Discord webhooks for different score ranges:
+
 - High priority: Score > 85
 - Medium priority: Score 75-85
 - Watch list: Score 60-75
@@ -356,6 +375,7 @@ While the scanner runs:
 ## 🚀 System is LIVE
 
 Your automated whale detection system is:
+
 - ✅ Scanning Pump.fun every 60 seconds
 - ✅ Analyzing tokens with AI-powered scoring
 - ✅ Filtering for high-quality opportunities (score > 75)

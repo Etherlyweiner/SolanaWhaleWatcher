@@ -11,11 +11,14 @@
 ### [ ] Verify Real Token Detection
 
 **What to do:**
+
 1. Open your scanner window (should be running)
 2. Watch for this line:
+
    ```json
    "flagged": 1  // ← ALERT TRIGGERED!
    ```
+
 3. When you see it, immediately:
    - Check Discord for whale alert
    - Open N8N → Executions (look for green checkmark)
@@ -23,12 +26,14 @@
    - Verify it's a real token
 
 **If no alert in 15 minutes:**
+
 ```powershell
 # Test manually to verify pipeline
 node test-with-real-token.js
 ```
 
 **Document your findings:**
+
 - Token symbol: ___________________
 - Score: ___________________
 - Why it triggered: ___________________
@@ -56,6 +61,7 @@ New-Item -ItemType Directory -Path "docs","config","scripts","tests","logs","ui"
 ### [ ] 2. Write Master README.md (20 min)
 
 **Should include:**
+
 - Project description (1 paragraph)
 - Quick start (3-4 commands)
 - Features list
@@ -68,6 +74,7 @@ New-Item -ItemType Directory -Path "docs","config","scripts","tests","logs","ui"
 ### [ ] 3. Create Startup Scripts (20 min)
 
 **scripts/start.ps1:**
+
 ```powershell
 Write-Host "Starting Solana Whale Watcher..." -ForegroundColor Green
 cd c:\Users\Jonat\SolanaWhaleWatcher
@@ -75,12 +82,14 @@ npm run scan -- --interval=60
 ```
 
 **scripts/stop.ps1:**
+
 ```powershell
 Stop-Process -Name node -Force
 Write-Host "Scanner stopped" -ForegroundColor Yellow
 ```
 
 **scripts/status.ps1:**
+
 ```powershell
 Get-Process -Name node -ErrorAction SilentlyContinue
 Write-Host "Check N8N: http://localhost:5678" -ForegroundColor Cyan
@@ -103,6 +112,7 @@ logs/
 ### [ ] 5. Document Architecture (30 min)
 
 **Create docs/ARCHITECTURE.md:**
+
 - System diagram
 - Data flow
 - Component descriptions
@@ -113,11 +123,13 @@ logs/
 ### [ ] 6. Write Test Suite (30 min)
 
 **tests/unit/evaluator.test.js:**
+
 - Test scoring algorithm
 - Test threshold filtering
 - Test reason generation
 
 **tests/integration/pipeline.test.js:**
+
 - Test end-to-end flow
 - Test webhook sending
 - Test N8N integration
@@ -129,16 +141,19 @@ logs/
 ### [ ] Day 1: Monitor & Tune (2-3 hours)
 
 **Morning:**
+
 - Run system for 24 hours
 - Document all alerts
 - Analyze accuracy
 
 **Afternoon:**
+
 - Calculate optimal threshold
 - Adjust if needed (higher/lower)
 - Document reasoning
 
 **Evening:**
+
 - Review day's performance
 - Plan UI development
 - Create mockups
@@ -146,6 +161,7 @@ logs/
 ### [ ] Day 2: Start Web UI (4-6 hours)
 
 **Setup (1 hour):**
+
 ```powershell
 # Create React app
 cd ui
@@ -155,12 +171,14 @@ npm install tailwindcss recharts lucide-react
 ```
 
 **Dashboard Page (2 hours):**
+
 - Real-time token feed
 - Active alerts section
 - Score distribution chart
 - System status indicators
 
 **Basic Layout (1 hour):**
+
 - Navigation
 - Header with stats
 - Footer
@@ -169,18 +187,21 @@ npm install tailwindcss recharts lucide-react
 ### [ ] Day 3: UI Features (4-6 hours)
 
 **Alert History Page (2 hours):**
+
 - Table with all past alerts
 - Filter by date/score
 - Export to CSV
 - Detail view
 
 **Configuration Page (2 hours):**
+
 - Threshold adjustment slider
 - Provider enable/disable
 - Discord webhook config
 - Save/load settings
 
 **API Endpoints (2 hours):**
+
 ```javascript
 // src/api/server.js
 app.get('/api/alerts', getAllAlerts);
@@ -192,16 +213,19 @@ app.get('/api/status', getSystemStatus);
 ### [ ] Day 4: Polish & Deploy (3-4 hours)
 
 **Testing:**
+
 - Test all features
 - Fix bugs
 - Mobile responsive
 
 **Documentation:**
+
 - UI usage guide
 - Screenshot tutorials
 - Video walkthrough
 
 **Deploy:**
+
 - Build production version
 - Configure auto-start
 - Set up monitoring
@@ -211,24 +235,28 @@ app.get('/api/status', getSystemStatus);
 ## 🎯 WEEK 2+ - FUTURE ENHANCEMENTS
 
 ### [ ] Add More Data Sources
+
 - [ ] GMGN API integration
 - [ ] Better Helius plan (if profitable)
 - [ ] Social sentiment (Twitter/Telegram)
 - [ ] On-chain analytics
 
 ### [ ] Implement Trading Strategies
+
 - [ ] Copy trading signals
 - [ ] Momentum detection
 - [ ] Grid trading setup
 - [ ] Auto-execution (optional)
 
 ### [ ] Performance Upgrades
+
 - [ ] Machine learning scoring
 - [ ] Backtesting capability
 - [ ] Portfolio tracking
 - [ ] Trade result logging
 
 ### [ ] Monitoring & Alerts
+
 - [ ] Email notifications
 - [ ] Telegram bot
 - [ ] Mobile app
@@ -239,6 +267,7 @@ app.get('/api/status', getSystemStatus);
 ## 🏆 PROFESSIONAL STANDARDS
 
 ### [ ] Code Quality
+
 - [ ] Consistent code style
 - [ ] ESLint configuration
 - [ ] Prettier formatting
@@ -246,6 +275,7 @@ app.get('/api/status', getSystemStatus);
 - [ ] Type checking (optional)
 
 ### [ ] Documentation
+
 - [ ] Complete README
 - [ ] Architecture docs
 - [ ] API documentation
@@ -254,6 +284,7 @@ app.get('/api/status', getSystemStatus);
 - [ ] CHANGELOG maintained
 
 ### [ ] Testing
+
 - [ ] Unit test coverage > 80%
 - [ ] Integration tests
 - [ ] E2E tests (for UI)
@@ -261,6 +292,7 @@ app.get('/api/status', getSystemStatus);
 - [ ] CI/CD pipeline (optional)
 
 ### [ ] Security
+
 - [ ] No hardcoded secrets
 - [ ] Environment variables
 - [ ] API key rotation
@@ -268,6 +300,7 @@ app.get('/api/status', getSystemStatus);
 - [ ] Rate limiting
 
 ### [ ] Operations
+
 - [ ] Automated startup
 - [ ] Health checks
 - [ ] Log rotation
@@ -281,18 +314,21 @@ app.get('/api/status', getSystemStatus);
 ### Development Metrics
 
 **Code:**
+
 - [ ] Files organized: ___/100%
 - [ ] Documentation: ___/100%
 - [ ] Tests written: ___/100%
 - [ ] UI built: ___/100%
 
 **System:**
+
 - [ ] Uptime: ___%
 - [ ] Alerts per day: ___
 - [ ] Alert accuracy: ___%
 - [ ] False positive rate: ___%
 
 **Business:**
+
 - [ ] Tokens detected: ___
 - [ ] Opportunities found: ___
 - [ ] Trades executed: ___
@@ -303,22 +339,27 @@ app.get('/api/status', getSystemStatus);
 ## 💡 QUICK WINS (Do These First)
 
 ### [ ] 1. Create Start Script
+
 **Time**: 5 minutes
 **Impact**: Easy system startup
 
 ### [ ] 2. Write README
+
 **Time**: 15 minutes
 **Impact**: Professional appearance
 
 ### [ ] 3. Set Up Git
+
 **Time**: 10 minutes
 **Impact**: Version control
 
 ### [ ] 4. Document First Alert
+
 **Time**: 5 minutes
 **Impact**: Proof of concept
 
 ### [ ] 5. Create Status Check
+
 **Time**: 10 minutes
 **Impact**: Easy monitoring
 
@@ -326,9 +367,10 @@ app.get('/api/status', getSystemStatus);
 
 ## 🎯 SUCCESS DEFINITION
 
-### You've Succeeded When:
+### You've Succeeded When
 
 **Technical:**
+
 - ✅ Clean, organized codebase
 - ✅ Comprehensive documentation
 - ✅ Automated testing
@@ -336,6 +378,7 @@ app.get('/api/status', getSystemStatus);
 - ✅ Professional structure
 
 **Operational:**
+
 - ✅ System runs 24/7 stable
 - ✅ Easy to start/stop/monitor
 - ✅ Logs are clean
@@ -343,6 +386,7 @@ app.get('/api/status', getSystemStatus);
 - ✅ Can demo to others
 
 **Business:**
+
 - ✅ Detecting opportunities
 - ✅ Alerts are actionable
 - ✅ Time to detection < 5 min
@@ -354,18 +398,21 @@ app.get('/api/status', getSystemStatus);
 ## 📝 DAILY CHECKLIST
 
 ### Every Morning (5 min)
+
 - [ ] Check system is running
 - [ ] Review overnight alerts
 - [ ] Check for errors
 - [ ] Verify N8N active
 
 ### Every Evening (5 min)
+
 - [ ] Review day's performance
 - [ ] Check alert quality
 - [ ] Plan next improvements
 - [ ] Backup configuration
 
 ### Every Sunday (30 min)
+
 - [ ] Analyze week's data
 - [ ] Tune parameters
 - [ ] Update documentation
@@ -385,14 +432,16 @@ app.get('/api/status', getSystemStatus);
 ## 📞 QUICK REFERENCE
 
 **Scanner Running?**
+
 ```powershell
 Get-Process -Name node
 ```
 
 **Check N8N:**
-http://localhost:5678
+<http://localhost:5678>
 
 **Test Pipeline:**
+
 ```powershell
 node test-with-real-token.js
 ```
@@ -401,15 +450,17 @@ node test-with-real-token.js
 Check scanner window for real-time output
 
 **Stop Everything:**
+
 ```powershell
 Stop-Process -Name node -Force
 ```
 
 ---
 
-## 🎉 YOU'RE READY!
+## 🎉 YOU'RE READY
 
 **What you have:**
+
 - ✅ Working detection system
 - ✅ Professional architecture
 - ✅ Clean error handling
@@ -417,6 +468,7 @@ Stop-Process -Name node -Force
 - ✅ Clear roadmap
 
 **What's next:**
+
 - ⏳ Verify with real token
 - ⏳ Organize files
 - ⏳ Build UI

@@ -10,6 +10,7 @@
 ### ✅ What's Working
 
 **Scanner Code (src/core/scanner.js)**
+
 - ✅ Lines 277: `solanaLoader.getTokenHolders()` - CORRECT
 - ✅ Lines 301: `dexscreenerProvider.getMarketData()` - CORRECT
 - ✅ Lines 322: `pumpfunProvider.getRecentLaunches()` - CORRECT
@@ -17,12 +18,14 @@
 - ✅ Webhook sending: Lines 100-117 (Sends to N8N)
 
 **Workflow File (whale-watcher-discord-FIXED.json)**
+
 - ✅ Threshold: 20 (Line 25)
 - ✅ Data mapping: `$json.body.score` (Line 23)
 - ✅ Discord webhook configured (Line 39)
 - ✅ Complete message template with all fields
 
 **Infrastructure**
+
 - ✅ Docker N8N: Should be running on port 5678
 - ✅ 16 Node processes detected (some may be old scanners)
 
@@ -31,6 +34,7 @@
 ## ⚠️ CRITICAL ISSUE IDENTIFIED
 
 **N8N Workflow Not Imported Yet**
+
 - You mentioned: "i havent imported the new workflow into N8N so the flow isnt active"
 - Scanner is sending webhooks to: `http://localhost:5678/webhook/whale-watcher`
 - N8N is NOT listening (no active workflow)
@@ -43,6 +47,7 @@
 ## 🎯 ROOT CAUSE: No Alerts
 
 ### The Issue
+
 1. Scanner IS running and finding tokens ✅
 2. Scanner IS evaluating tokens ✅
 3. Scanner IS sending webhooks ✅
@@ -51,6 +56,7 @@
 6. Discord never receives alerts ❌
 
 ### The Solution
+
 **Import and activate the workflow in N8N!**
 
 ---
@@ -60,6 +66,7 @@
 ### Files to Archive (Old Documentation)
 
 **Root Directory Clutter** (17 status files!)
+
 ```
 CLEANUP_REPORT.md          → Archive (old)
 FINAL_STATUS_803PM.md      → Archive (old)
@@ -76,6 +83,7 @@ TONIGHT_ACTION_PLAN.md     → Archive (old)
 ```
 
 **Keep These**
+
 ```
 SYSTEM_READY.md            → Keep (latest guide)
 REAL_TOKEN_DETECTION.md    → Keep (important)
@@ -86,6 +94,7 @@ USER_GUIDE.md              → Keep (user facing)
 ### Scripts to Archive (Redundant)
 
 **Testing Scripts** (Keep minimal set)
+
 ```
 check-n8n-execution.ps1    → Keep
 check-scanner-output.ps1   → Archive (redundant)
@@ -101,6 +110,7 @@ test-pumpfun-api.ps1       → Archive (redundant)
 ```
 
 **Keep These**
+
 ```
 open-scanner-terminal.ps1  → Keep (user facing)
 restart-scanner.ps1        → Keep (user facing)
@@ -117,19 +127,23 @@ verify-n8n-workflow.ps1    → Keep (critical for verification)
 **Scoring System** (Max 100 points):
 
 **Whale Activity** (45 points max)
+
 - Whale concentration 20-60%: +25 points (Line 212)
 - Whales accumulating: +20 points (Line 220)
 
 **Launch Characteristics** (45 points max)
+
 - Low rug score: +20 points (Line 228)
 - High liquidity: +15 points (Line 232)
 - Low team share: +10 points (Line 236)
 
 **Market Momentum** (20 points max)
+
 - Strong volume: +10 points (Line 244)
 - Volume spike: +10 points (Line 250)
 
 **Why Threshold is 20:**
+
 - With Pump.fun down and Helius rate-limited
 - Most tokens only get market momentum points (0-20)
 - Threshold of 20 ensures some alerts while proving the system
@@ -150,7 +164,7 @@ I'll create a cleanup script to archive old documentation.
 
 **CRITICAL**: This is the missing piece!
 
-1. Open: http://localhost:5678
+1. Open: <http://localhost:5678>
 2. Click "+ Add workflow"
 3. Click ⋮ → "Import from File"
 4. Select: `n8n-workflows/whale-watcher-discord-FIXED.json`
@@ -171,6 +185,7 @@ node test-with-real-token.js
 ```
 
 Should see:
+
 - ✅ 200 OK response
 - ✅ Green checkmark in N8N executions
 - ✅ Alert in Discord
@@ -186,6 +201,7 @@ Should see:
 - **Result**: Discord notification appears
 
 **If no alerts in 10 minutes:**
+
 - Check N8N executions for errors
 - Run `node test-with-real-token.js` to verify pipeline
 - Check scanner logs for flagged count
@@ -207,6 +223,7 @@ Should see:
 ## 📋 FILES TO KEEP VS ARCHIVE
 
 ### Core Files (Keep)
+
 ```
 src/                       → All code (working)
 n8n-workflows/FIXED.json   → Correct workflow
@@ -218,6 +235,7 @@ SYSTEM_READY.md            → Latest status
 ```
 
 ### Archive to docs/archive/
+
 ```
 All status MD files        → Historical
 Old test scripts           → Redundant
@@ -231,12 +249,14 @@ Debug scripts              → Development only
 **Your system is 99% complete!**
 
 **What Works:**
+
 - ✅ Scanner finding tokens
 - ✅ Evaluation scoring correctly  
 - ✅ Webhook code working
 - ✅ Discord webhook configured
 
 **What's Missing:**
+
 - ❌ N8N workflow not active (not imported yet)
 
 **Solution:**

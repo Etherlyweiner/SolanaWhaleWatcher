@@ -1,4 +1,4 @@
-# 🚨 WEBHOOK NOT CONFIGURED - Fix Now!
+# 🚨 WEBHOOK NOT CONFIGURED - Fix Now
 
 **Problem Found:** N8N_WEBHOOK_URL is not set in your .env file
 **Impact:** Scanner detects tokens but can't send to N8N → No Discord alerts!
@@ -15,6 +15,7 @@ notepad .env
 ```
 
 If file doesn't exist, create it from template:
+
 ```powershell
 copy .env.example .env
 notepad .env
@@ -23,11 +24,13 @@ notepad .env
 ### Step 2: Add This Line
 
 **Add to your .env file:**
+
 ```
 N8N_WEBHOOK_URL=http://localhost:5678/webhook/whale-watcher
 ```
 
 **Complete .env should look like:**
+
 ```env
 # Helius Configuration
 HELIUS_RPC_URL=https://myrta-kxo6n1-fast-mainnet.helius-rpc.com
@@ -54,27 +57,33 @@ npm run scan -- --interval=60
 ## ✅ VERIFY IT WORKS
 
 ### Test 1: Check Config
+
 ```powershell
 node check-webhook-config.js
 ```
 
 Should show:
+
 ```
 ✅ N8N_WEBHOOK_URL: SET
    URL: http://localhost:5678/webhook/whale-watcher
 ```
 
 ### Test 2: Manual Test
+
 ```powershell
 node test-with-real-token.js
 ```
 
 Should get:
+
 - ✅ 200 OK response
 - ✅ Message in Discord
 
 ### Test 3: Wait for Real Token
+
 Watch scanner logs for:
+
 ```json
 {"level":"info","msg":"Webhook notification sent","statusCode":200}
 ```
@@ -86,6 +95,7 @@ Then check Discord!
 ## 🎯 WHY THIS HAPPENED
 
 **The Flow:**
+
 ```
 Scanner → [CHECK ENV VAR] → N8N → Discord
               ↑
@@ -93,6 +103,7 @@ Scanner → [CHECK ENV VAR] → N8N → Discord
 ```
 
 **What was happening:**
+
 1. Scanner found tokens ✅
 2. Evaluated & scored them ✅
 3. Checked process.env.N8N_WEBHOOK_URL ❌ (not set)
@@ -101,6 +112,7 @@ Scanner → [CHECK ENV VAR] → N8N → Discord
 6. Discord never notified
 
 **After fix:**
+
 1. Scanner found tokens ✅
 2. Evaluated & scored them ✅  
 3. Checked process.env.N8N_WEBHOOK_URL ✅ (set!)
@@ -113,22 +125,26 @@ Scanner → [CHECK ENV VAR] → N8N → Discord
 ## 📝 QUICK COMMANDS
 
 **Open .env file:**
+
 ```powershell
 notepad .env
 ```
 
 **Add this line:**
+
 ```
 N8N_WEBHOOK_URL=http://localhost:5678/webhook/whale-watcher
 ```
 
 **Save and restart:**
+
 ```powershell
 Stop-Process -Name node -Force
 npm run scan -- --interval=60
 ```
 
 **Verify:**
+
 ```powershell
 node check-webhook-config.js
 ```
@@ -138,6 +154,7 @@ node check-webhook-config.js
 ## 🎉 AFTER FIX
 
 You should see in scanner logs:
+
 ```json
 {"level":"info","msg":"🎯 TOKEN FLAGGED"}
 {"level":"info","msg":"Webhook notification sent","statusCode":200,"mint":"..."}
@@ -145,6 +162,7 @@ You should see in scanner logs:
 ```
 
 And in Discord:
+
 ```
 🎯 Profitable Token Detected!
 Symbol: TOKEN

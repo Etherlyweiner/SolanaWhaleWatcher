@@ -4,6 +4,7 @@
 
 **Goal**: Transform CLI scanner into easy-to-use application
 **Needs**:
+
 - Start program with shortcut/icon
 - Control scanner through interface
 - Monitor status and alerts
@@ -15,9 +16,11 @@
 ## 🎯 Option 1: Electron Desktop App (RECOMMENDED) ⭐⭐⭐⭐⭐
 
 ### What It Is
+
 Full desktop application using web technologies (HTML/CSS/JavaScript). Think: Discord, VS Code, Slack.
 
 ### Features You'd Get
+
 - **Dashboard**: Real-time scanner status, token discoveries, alerts
 - **Control Panel**: Start/Stop scanner, adjust thresholds, configure settings
 - **Token List**: Live feed of discovered tokens with scores
@@ -28,6 +31,7 @@ Full desktop application using web technologies (HTML/CSS/JavaScript). Think: Di
 - **Notifications**: Native Windows notifications for high-score tokens
 
 ### Technical Details
+
 ```
 Framework: Electron
 Languages: JavaScript/TypeScript, HTML, CSS
@@ -38,6 +42,7 @@ Integration: Uses your existing scanner code
 ```
 
 ### Pros
+
 ✅ Professional, native-looking application
 ✅ Can use existing JavaScript/Node.js code
 ✅ Cross-platform (Windows, Mac, Linux)
@@ -48,12 +53,14 @@ Integration: Uses your existing scanner code
 ✅ Easy to add features (charts, notifications, etc.)
 
 ### Cons
+
 ❌ Larger app size (~150-200 MB)
 ❌ Higher memory usage (~100-150 MB)
 ❌ Requires bundling/packaging
 ❌ Learning curve for UI framework (if not familiar)
 
 ### Example UI Layout
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │  🐋 Solana Whale Watcher                    [_][□][X]│
@@ -82,10 +89,12 @@ Integration: Uses your existing scanner code
 ```
 
 ### Cost
+
 - Free (open source frameworks)
 - Development time investment
 
 ### Best For
+
 - Professional, polished application
 - Users who want rich features and visualizations
 - Long-term project with plans to add more features
@@ -95,9 +104,11 @@ Integration: Uses your existing scanner code
 ## 🎯 Option 2: Web-Based Dashboard (LOCAL) ⭐⭐⭐⭐
 
 ### What It Is
+
 Web interface running locally (like N8N). Access via browser at `http://localhost:3000`.
 
 ### Features You'd Get
+
 - **Web Dashboard**: Modern, responsive interface
 - **Real-Time Updates**: WebSocket connection for live data
 - **Control Panel**: Start/stop scanner, adjust settings
@@ -107,6 +118,7 @@ Web interface running locally (like N8N). Access via browser at `http://localhos
 - **No Installation**: Just click shortcut to open browser
 
 ### Technical Details
+
 ```
 Framework: Express.js + React/Vue
 Backend: Node.js (Express server)
@@ -117,6 +129,7 @@ Development Time: 1-2 weeks
 ```
 
 ### Pros
+
 ✅ Lightweight (browser does the work)
 ✅ Modern, responsive design
 ✅ Access from any device on network
@@ -126,12 +139,14 @@ Development Time: 1-2 weeks
 ✅ No "app" to install - just a browser
 
 ### Cons
+
 ❌ Requires browser to be open
 ❌ No system tray integration
 ❌ Less "native" feeling
 ❌ Requires keeping server running
 
 ### Example UI
+
 ```
 Browser: http://localhost:3000
 
@@ -160,10 +175,12 @@ Browser: http://localhost:3000
 ```
 
 ### Cost
+
 - Free (open source)
 - Hosting: Local only (no cloud costs)
 
 ### Best For
+
 - Users comfortable with browser interfaces
 - Want to access from multiple devices
 - Prefer web-style UIs
@@ -173,9 +190,11 @@ Browser: http://localhost:3000
 ## 🎯 Option 3: Windows System Tray App ⭐⭐⭐⭐
 
 ### What It Is
+
 Lightweight app that lives in your Windows system tray (near clock). Right-click for menu.
 
 ### Features You'd Get
+
 - **Always Available**: Lives in system tray
 - **Quick Actions**: Right-click menu for common tasks
 - **Status Notifications**: Windows toast notifications
@@ -184,6 +203,7 @@ Lightweight app that lives in your Windows system tray (near clock). Right-click
 - **Low Resource**: Very lightweight (~20-30 MB)
 
 ### Technical Details
+
 ```
 Framework: Node.js + systray/node-notifier
 OR: Electron with minimal window
@@ -192,6 +212,7 @@ Development Time: 3-5 days
 ```
 
 ### Pros
+
 ✅ Very lightweight
 ✅ Minimal screen space
 ✅ Quick access from anywhere
@@ -200,12 +221,14 @@ Development Time: 3-5 days
 ✅ Fast to develop
 
 ### Cons
+
 ❌ Limited UI capabilities
 ❌ No rich visualizations
 ❌ Basic controls only
 ❌ Less intuitive for complex operations
 
 ### Example Interface
+
 ```
 System Tray Icon: 🐋
 
@@ -237,10 +260,12 @@ Notification Popup (when token found):
 ```
 
 ### Cost
+
 - Free
 - Very fast development
 
 ### Best For
+
 - Users who want "set it and forget it"
 - Minimal resource usage priority
 - Quick access to basic controls
@@ -250,9 +275,11 @@ Notification Popup (when token found):
 ## 🎯 Option 4: Terminal UI (TUI) ⭐⭐⭐
 
 ### What It Is
+
 Rich terminal interface with colors, boxes, and interactive controls (like `htop` or `docker stats`).
 
 ### Features You'd Get
+
 - **Live Dashboard**: Real-time updates in terminal
 - **Keyboard Controls**: Navigate with arrow keys
 - **Color-Coded**: Status indicators, alerts
@@ -260,6 +287,7 @@ Rich terminal interface with colors, boxes, and interactive controls (like `htop
 - **Lightweight**: Runs in any terminal
 
 ### Technical Details
+
 ```
 Framework: blessed, ink, or terminal-kit
 Language: JavaScript/Node.js
@@ -268,6 +296,7 @@ Development Time: 3-5 days
 ```
 
 ### Pros
+
 ✅ Extremely lightweight
 ✅ Works over SSH (remote access)
 ✅ No GUI framework needed
@@ -276,12 +305,14 @@ Development Time: 3-5 days
 ✅ Works on any system with terminal
 
 ### Cons
+
 ❌ Terminal-only (no mouse, limited graphics)
 ❌ Less intuitive for non-technical users
 ❌ No rich visualizations
 ❌ Harder to make "pretty"
 
 ### Example Interface
+
 ```
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃  🐋 SOLANA WHALE WATCHER                          ┃
@@ -303,10 +334,12 @@ Development Time: 3-5 days
 ```
 
 ### Cost
+
 - Free
 - Fast development
 
 ### Best For
+
 - Technical users comfortable with terminals
 - Remote server deployment
 - Minimal resource usage
@@ -316,15 +349,18 @@ Development Time: 3-5 days
 ## 🎯 Option 5: Simple Windows Shortcut + Status Page ⭐⭐
 
 ### What It Is
+
 Double-click icon starts everything + opens a simple HTML status page.
 
 ### Features You'd Get
+
 - **One-Click Start**: Desktop shortcut launches scanner
 - **Status Page**: Auto-opens browser with basic stats
 - **Minimal Setup**: Almost no development needed
 - **Quick Implementation**: Can be done in hours
 
 ### Technical Details
+
 ```
 Components:
 - .bat or .exe launcher
@@ -335,6 +371,7 @@ Development Time: 4-8 hours
 ```
 
 ### Pros
+
 ✅ Fastest to implement (hours, not weeks)
 ✅ Very simple
 ✅ Minimal complexity
@@ -342,12 +379,14 @@ Development Time: 4-8 hours
 ✅ No heavy frameworks
 
 ### Cons
+
 ❌ Very basic features
 ❌ Limited interactivity
 ❌ Less polished
 ❌ Manual config changes
 
 ### Example
+
 ```
 Desktop Icon: [🐋 Start Whale Watcher]
 ↓
@@ -359,10 +398,12 @@ Shows simple dashboard with current status
 ```
 
 ### Cost
+
 - Free
 - Minimal development time
 
 ### Best For
+
 - Quick solution
 - Users who just want "click and go"
 - Temporary solution before full UI
@@ -388,6 +429,7 @@ Shows simple dashboard with current status
 ### For Your Use Case (Best Overall): Electron Desktop App ⭐
 
 **Why**:
+
 - Professional, polished application
 - Complete control over scanner
 - Room to grow (add trading features, charts, etc.)
@@ -395,6 +437,7 @@ Shows simple dashboard with current status
 - Can add advanced features (auto-trading, portfolio tracking)
 
 **Recommended Stack**:
+
 ```
 - Electron (desktop framework)
 - React (UI library)
@@ -404,6 +447,7 @@ Shows simple dashboard with current status
 ```
 
 **Timeline**:
+
 - Week 1: Basic UI + scanner controls
 - Week 2: Token list, alert history, settings
 - Week 3: Polish, charts, advanced features
@@ -411,6 +455,7 @@ Shows simple dashboard with current status
 ### For Quick Start (Fastest): System Tray App ⭐
 
 **Why**:
+
 - Can build in 3-5 days
 - Still feels like a real app
 - "Set and forget" design
@@ -420,6 +465,7 @@ Shows simple dashboard with current status
 ### For Budget/Time (Zero Cost): Web Dashboard
 
 **Why**:
+
 - Modern interface in browser
 - Leverages existing N8N skills
 - Can access from phone/tablet
@@ -430,9 +476,11 @@ Shows simple dashboard with current status
 ## 🚀 Recommended Implementation Plan
 
 ### Phase 1: System Tray App (This Week)
+
 **Goal**: Quick win - make it easy to use NOW
 
 **Features**:
+
 - Desktop shortcut to start
 - System tray icon
 - Start/Stop controls
@@ -443,9 +491,11 @@ Shows simple dashboard with current status
 **Result**: Usable app-style experience
 
 ### Phase 2: Full Electron App (Next 2-3 Weeks)
+
 **Goal**: Professional trading application
 
 **Features**:
+
 - Rich dashboard
 - Live token feed
 - Charts and analytics
@@ -474,16 +524,19 @@ Shows simple dashboard with current status
 ## 🎯 My Top Pick: Hybrid Approach
 
 ### Start with System Tray (Week 1)
+
 - Quick to build
 - Immediate usability improvement
 - Low risk
 
 ### Expand to Full Electron App (Weeks 2-4)
+
 - Build on system tray foundation
 - Add rich features gradually
 - End up with professional application
 
 ### Why This Works
+
 - ✅ Get usable app quickly (days)
 - ✅ Keep improving incrementally
 - ✅ Learn as you go
@@ -495,6 +548,7 @@ Shows simple dashboard with current status
 ## 📋 Next Steps
 
 **Choose your option, and I can**:
+
 1. Create detailed implementation plan
 2. Set up project structure
 3. Build the first version

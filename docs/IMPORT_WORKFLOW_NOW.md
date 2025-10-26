@@ -1,4 +1,4 @@
- # 🚀 IMPORT N8N WORKFLOW - DO THIS NOW!
+# 🚀 IMPORT N8N WORKFLOW - DO THIS NOW
 
 **This is the ONLY thing preventing alerts from working!**
 
@@ -20,6 +20,7 @@
 ### Step 1: Open N8N
 
 Open your browser and go to:
+
 ```
 http://localhost:5678
 ```
@@ -45,6 +46,7 @@ Click the **"+ Add workflow"** button (top right corner)
 ### Step 5: Verify
 
 You should see:
+
 - Workflow name: "Whale Watcher - Discord Alerts (FIXED)"
 - 3 nodes: Webhook → High Score Filter → Discord Notification
 - Green "Active" toggle
@@ -62,6 +64,7 @@ node test-with-real-token.js
 ```
 
 **Expected output:**
+
 ```
 ✅ Webhook Response: 200
 Response: {"message":"Workflow was started"}
@@ -71,6 +74,7 @@ Response: {"message":"Workflow was started"}
 ```
 
 **Then check:**
+
 1. N8N Executions tab (should show green checkmark)
 2. Discord channel (should show whale alert message)
 
@@ -84,6 +88,7 @@ npm run scan -- --interval=60
 ```
 
 **Watch for:**
+
 ```
 "candidates": 22
 "flagged": 0    ← Waiting for token scoring > 20
@@ -100,9 +105,10 @@ npm run scan -- --interval=60
 
 ---
 
-## 🎉 That's It!
+## 🎉 That's It
 
 Once you import and activate the workflow:
+
 - Scanner webhooks will reach N8N ✅
 - N8N will filter scores > 20 ✅
 - Discord will receive alerts ✅

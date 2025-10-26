@@ -251,8 +251,20 @@ class TokenScanner {
       }
     }
 
-    // Decision: Flag if score >= 20 (matches N8N workflow threshold)
-    const meets_criteria = score >= 20;
+    // Decision: Flag if score >= 20 AND has market data (must be tradeable)
+    // Tokens without market data cannot be traded, so don't alert
+    const hasMarketData = marketData && marketData.symbol && marketData.priceUsd;
+    const meets_criteria = score >= 20 && hasMarketData;
+    
+    // Log why tokens are rejected
+    if (score >= 20 && !hasMarketData) {
+      this.log.debug('Token scored high but has no market data (not tradeable)', {
+        mint,
+        score,
+        hasHolder: !!holderData,
+        hasMarket: !!marketData,
+      });
+    }
 
     return {
       mint,
@@ -299,7 +311,16 @@ class TokenScanner {
   async fetchMarketData(mint) {
     try {
       const market = await this.context.services.dexscreenerProvider.getMarketData(mint);
-      if (!market) return null;
+      if (!market) {
+        this.log.debug('No market data found on Dexscreener', { mint });
+        return null;
+      }
+
+      // Validate we have minimum required data for a tradeable token
+      if (!market.symbol || !market.priceUsd) {
+        this.log.debug('Market data incomplete (missing symbol or price)', { mint });
+        return null;
+      }
 
       return {
         symbol: market.symbol,
@@ -373,6 +394,16 @@ class TokenScanner {
   async notifyWebhook(evaluation) {
     const webhookUrl = process.env.N8N_WEBHOOK_URL;
     if (!webhookUrl) {
+      return;
+    }
+
+    // Safety check: Don't send if missing critical market data
+    if (!evaluation.data.market || !evaluation.data.market.symbol || !evaluation.data.market.priceUsd) {
+      this.log.warn('Skipping webhook - token missing market data', { 
+        mint: evaluation.mint,
+        hasMarket: !!evaluation.data.market,
+        symbol: evaluation.data.market?.symbol,
+      });
       return;
     }
 
