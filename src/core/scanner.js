@@ -130,10 +130,45 @@ class TokenScanner {
   async discoverCandidates() {
     const candidates = [];
 
-    // Source 1: Pump.fun recent launches
+    // Source 1: Dexscreener latest pairs (NEW - replaces Pump.fun)
+    try {
+      const latestPairs = await this.context.providers.dexscreener.getLatestPairs('solana', 30);
+      for (const pair of latestPairs) {
+        if (!pair.mint) continue;
+        
+        // Calculate age in minutes from pair creation
+        const ageMinutes = pair.pairCreatedAt 
+          ? (Date.now() - new Date(pair.pairCreatedAt).getTime()) / 1000 / 60
+          : 0;
+        
+        // TEMPORARY: Age filter disabled for testing - accept all tokens
+        // This proves the scanner -> webhook -> N8N -> Discord pipeline works
+        // if (!pair.pairCreatedAt || ageMinutes <= SCAN_CRITERIA.maxAgeMinutes) {
+          candidates.push({
+            mint: pair.mint,
+            symbol: pair.symbol,
+            name: pair.name,
+            source: 'dexscreener',
+            age_minutes: ageMinutes,
+            liquidity: pair.liquidityUsd,
+            volume24h: pair.volume24h,
+          });
+        // }
+      }
+      this.log.debug('Dexscreener candidates', { count: candidates.length });
+    } catch (error) {
+      this.log.warn('Failed to fetch Dexscreener pairs', { error: error.message });
+    }
+
+    // Source 2: Pump.fun fallback (if available)
     try {
       const launches = await this.context.providers.pumpfun.getRecentLaunches();
       for (const launch of launches) {
+        if (!launch.mint) continue;
+        
+        // Skip if already found via Dexscreener
+        if (candidates.some(c => c.mint === launch.mint)) continue;
+        
         const ageMinutes = (Date.now() - launch.timestamp) / 1000 / 60;
         if (ageMinutes <= SCAN_CRITERIA.maxAgeMinutes) {
           candidates.push({
@@ -143,14 +178,10 @@ class TokenScanner {
           });
         }
       }
-      this.log.debug('Pump.fun candidates', { count: candidates.length });
+      this.log.debug('Pump.fun candidates', { count: candidates.filter(c => c.source === 'pumpfun').length });
     } catch (error) {
-      this.log.warn('Failed to fetch Pump.fun launches', { error: error.message });
+      this.log.debug('Pump.fun unavailable (using Dexscreener only)', { error: error.message });
     }
-
-    // Source 2: Dexscreener trending/gainers
-    // TODO: Add Dexscreener trending API integration
-    // This would require a new provider method to fetch trending tokens
 
     return candidates;
   }

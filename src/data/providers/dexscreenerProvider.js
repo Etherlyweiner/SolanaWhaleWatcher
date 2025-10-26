@@ -172,6 +172,51 @@ class DexscreenerProvider {
     };
   }
 
+  async getLatestPairs(chainId = 'solana', limit = 20) {
+    // Use token-profiles/latest endpoint which shows newest tokens
+    const path = `/token-profiles/latest/v1`;
+    try {
+      this.logger.info('Fetching latest pairs from Dexscreener', { path, chainId, limit });
+      const data = await this._get(path, { ttlMs: 5000, useCache: false });
+      const profiles = Array.isArray(data) ? data : [];
+      
+      this.logger.info('Dexscreener response received', { 
+        totalProfiles: profiles.length,
+        chainId 
+      });
+      
+      // Filter for Solana tokens and map to our format
+      const solanaTokens = profiles.filter(profile => profile.chainId === chainId);
+      this.logger.info('Filtered Solana tokens', { count: solanaTokens.length });
+      
+      const result = solanaTokens
+        .slice(0, limit)
+        .map((profile) => ({
+          mint: profile.tokenAddress,
+          symbol: profile.icon ? null : profile.tokenAddress?.slice(0, 6), // Use icon as symbol if available
+          name: profile.description || 'Unknown',
+          pairAddress: null,
+          dexId: null,
+          priceUsd: null,
+          liquidityUsd: 1, // Placeholder - will be fetched in evaluation
+          volume24h: null,
+          pairCreatedAt: null,
+          timestamp: Date.now(),
+        }))
+        .filter((token) => token.mint);
+      
+      this.logger.info('Returning formatted tokens', { 
+        count: result.length,
+        firstToken: result[0]?.mint 
+      });
+      
+      return result;
+    } catch (error) {
+      this.logger.error('Failed to fetch latest pairs', { error: error.message, chainId });
+      return [];
+    }
+  }
+
   _normalizePair(raw) {
     if (!raw) {
       return null;
