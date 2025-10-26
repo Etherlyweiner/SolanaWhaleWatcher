@@ -132,7 +132,7 @@ class TokenScanner {
 
     // Source 1: Dexscreener latest pairs (NEW - replaces Pump.fun)
     try {
-      const latestPairs = await this.context.providers.dexscreener.getLatestPairs('solana', 30);
+      const latestPairs = await this.context.services.dexscreenerProvider.getLatestPairs('solana', 30);
       for (const pair of latestPairs) {
         if (!pair.mint) continue;
         
@@ -162,7 +162,7 @@ class TokenScanner {
 
     // Source 2: Pump.fun fallback (if available)
     try {
-      const launches = await this.context.providers.pumpfun.getRecentLaunches();
+      const launches = await this.context.services.pumpfunProvider.getRecentLaunches();
       for (const launch of launches) {
         if (!launch.mint) continue;
         
