@@ -39,8 +39,9 @@ npx n8n
 ```
 
 **What happens**:
+
 - Downloads N8N automatically
-- Starts on http://localhost:5678
+- Starts on <http://localhost:5678>
 - Opens in your browser
 - Data is temporary (lost on restart)
 
@@ -55,15 +56,16 @@ n8n start
 ```
 
 **What happens**:
+
 - Permanent installation
 - Data persisted in `~/.n8n`
-- Starts on http://localhost:5678
+- Starts on <http://localhost:5678>
 
 ### First-Time Setup
 
-1. **N8N Opens in Browser**: http://localhost:5678
+1. **N8N Opens in Browser**: <http://localhost:5678>
 2. **Create Account**:
-   - Email: your-email@example.com
+   - Email: <your-email@example.com>
    - Password: (your secure password)
    - Note: This is LOCAL only, not sent anywhere
 
@@ -93,6 +95,7 @@ n8n start
 
 5. Click **"Listen for Test Event"** (button at bottom)
 6. **Copy the webhook URL** - it will look like:
+
    ```
    http://localhost:5678/webhook-test/whale-watcher
    ```
@@ -125,6 +128,7 @@ curl -X POST http://localhost:5678/webhook-test/whale-watcher \
 7. Click **"Save Changes"**
 
 Your webhook URL looks like:
+
 ```
 https://discord.com/api/webhooks/123456789/ABC-XYZ-TOKEN
 ```
@@ -139,6 +143,7 @@ https://discord.com/api/webhooks/123456789/ABC-XYZ-TOKEN
    - **Operation**: Send Message to Webhook
    - **Webhook URL**: (paste your Discord webhook URL)
    - **Text**: Click the expression button and enter:
+
      ```
      🎯 Profitable Token Detected!
      
@@ -159,6 +164,7 @@ https://discord.com/api/webhooks/123456789/ABC-XYZ-TOKEN
 1. In N8N workflow, toggle **"Active"** (top right)
 2. Click **"Save"**
 3. **Copy the Production Webhook URL**:
+
    ```
    http://localhost:5678/webhook/whale-watcher
    ```
@@ -166,11 +172,13 @@ https://discord.com/api/webhooks/123456789/ABC-XYZ-TOKEN
 ### 4.2: Configure Whale Watcher
 
 1. Open your `.env` file:
+
    ```bash
    code c:\Users\Jonat\SolanaWhaleWatcher\.env
    ```
 
 2. Add the N8N webhook URL:
+
    ```bash
    N8N_WEBHOOK_URL=http://localhost:5678/webhook/whale-watcher
    ```
@@ -186,6 +194,7 @@ npm run scan
 ```
 
 **What happens**:
+
 1. Scanner finds profitable tokens
 2. Sends data to N8N webhook
 3. N8N forwards to Discord
@@ -197,7 +206,7 @@ npm run scan
 
 ### 5.1: Get Claude API Key
 
-1. Go to: https://console.anthropic.com/
+1. Go to: <https://console.anthropic.com/>
 2. Sign up or log in
 3. Navigate to **"API Keys"**
 4. Click **"Create Key"**
@@ -215,13 +224,16 @@ npm run scan
      - **Header Name**: `x-api-key`
      - **Header Value**: (paste your Claude API key)
    - **Headers**:
+
      ```json
      {
        "anthropic-version": "2023-06-01",
        "content-type": "application/json"
      }
      ```
+
    - **Body**:
+
      ```json
      {
        "model": "claude-3-sonnet-20240229",
@@ -239,6 +251,7 @@ npm run scan
 
 1. Click on the **Discord node**
 2. Update the **Text** field:
+
    ```
    🎯 Profitable Token Detected!
    
@@ -274,6 +287,7 @@ npm run scan
 ### Adjust Scanner Criteria
 
 Edit `src/core/scanner.js` to customize:
+
 - Minimum score threshold
 - Whale concentration ranges
 - Volume requirements
@@ -288,6 +302,7 @@ Edit `src/core/scanner.js` to customize:
 **Issue**: `npx n8n` fails
 
 **Fix**:
+
 ```bash
 # Clear npx cache
 npx clear-npx-cache
@@ -301,12 +316,14 @@ npx n8n
 **Issue**: Scanner runs but N8N doesn't receive data
 
 **Checklist**:
+
 - [ ] N8N workflow is **Active** (toggle on)
 - [ ] Webhook URL in `.env` matches N8N
 - [ ] Scanner is running: `npm run scan`
 - [ ] Check N8N execution log for errors
 
 **Test manually**:
+
 ```bash
 curl -X POST http://localhost:5678/webhook/whale-watcher \
   -H "Content-Type: application/json" \
@@ -318,6 +335,7 @@ curl -X POST http://localhost:5678/webhook/whale-watcher \
 **Issue**: N8N receives data but Discord doesn't
 
 **Checklist**:
+
 - [ ] Discord webhook URL is correct
 - [ ] Discord channel has webhook permissions
 - [ ] Test Discord node directly in N8N
@@ -328,6 +346,7 @@ curl -X POST http://localhost:5678/webhook/whale-watcher \
 **Issue**: HTTP Request node fails
 
 **Common fixes**:
+
 - Verify API key is correct
 - Check header names (case-sensitive)
 - Ensure `anthropic-version` header is present
@@ -364,9 +383,10 @@ curl -X POST http://localhost:5678/webhook/whale-watcher \
 For 24/7 operation:
 
 1. **Install Docker Desktop**:
-   - Download: https://www.docker.com/products/docker-desktop
+   - Download: <https://www.docker.com/products/docker-desktop>
 
 2. **Run N8N in Docker**:
+
    ```bash
    docker run -d \
      --name n8n \
@@ -391,10 +411,10 @@ For 24/7 operation:
 
 ### Official Documentation
 
-- **N8N Docs**: https://docs.n8n.io
-- **Webhook Docs**: https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/
-- **Discord Docs**: https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/
-- **Claude API**: https://docs.anthropic.com/claude/reference/getting-started-with-the-api
+- **N8N Docs**: <https://docs.n8n.io>
+- **Webhook Docs**: <https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/>
+- **Discord Docs**: <https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.discord/>
+- **Claude API**: <https://docs.anthropic.com/claude/reference/getting-started-with-the-api>
 
 ### Whale Watcher Docs
 
@@ -404,8 +424,8 @@ For 24/7 operation:
 
 ### Community
 
-- **N8N Forum**: https://community.n8n.io
-- **Discord**: https://discord.gg/n8n
+- **N8N Forum**: <https://community.n8n.io>
+- **Discord**: <https://discord.gg/n8n>
 
 ---
 

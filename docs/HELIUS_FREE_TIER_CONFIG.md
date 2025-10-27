@@ -9,6 +9,7 @@
 ## 🔐 Current Configuration
 
 ### Secure RPC Endpoint
+
 ```
 URL: https://myrta-kxo6n1-fast-mainnet.helius-rpc.com
 Type: Secure RPC (no API key in URL)
@@ -16,12 +17,14 @@ Authentication: Embedded in unique subdomain
 ```
 
 ### REST API Key
+
 ```
 Key: f26c6485-96ad-4f9b-9a8f-9d2da59a2394
 Usage: Token metadata and enhanced Helius services
 ```
 
 ### Environment Variables (`.env`)
+
 ```bash
 # Secure RPC Endpoint (no API key needed in URL)
 HELIUS_RPC_URL=https://myrta-kxo6n1-fast-mainnet.helius-rpc.com
@@ -35,11 +38,13 @@ HELIUS_API_KEY=f26c6485-96ad-4f9b-9a8f-9d2da59a2394
 ## ✅ Validation Results
 
 ### API Connectivity Test
+
 ```bash
 npm run validate
 ```
 
 **Results:**
+
 - ✅ **Helius RPC**: Connected
 - ✅ **Helius API Key**: Valid
 - ✅ **Dexscreener API**: Connected
@@ -48,11 +53,13 @@ npm run validate
 - ❌ **Critical Issues**: 0
 
 ### Token Analysis Test
+
 ```bash
 npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ```
 
 **Results:**
+
 - ✅ **Program executed successfully**
 - ✅ **All 4 strategies evaluated**
 - ✅ **Whale leaderboard displayed**
@@ -88,12 +95,14 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### Expected Behavior (Not Errors)
 
 **"Too many accounts requested" messages:**
+
 - This is **normal** for tokens like SOL with millions of holders
 - Helius free tier has limits on `getTokenLargestAccounts` for very large tokens
 - The program handles this gracefully by using cached data
 - **This is NOT a failure** - it's proper fallback behavior
 
 **Pump.fun 404 errors:**
+
 - Pump.fun API endpoint changed or is down
 - This is **external** to Helius
 - Does not affect core functionality
@@ -105,6 +114,7 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### What the Free Tier Provides
 
 ✅ **Available:**
+
 - Standard Solana RPC methods
 - Token supply queries
 - Wallet activity lookups
@@ -112,11 +122,13 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 - Basic token metadata
 
 ⚠️ **Limited:**
+
 - `getTokenLargestAccounts` for tokens with millions of holders
 - Rate limits (lower than paid tiers)
 - Monthly request quotas
 
 ❌ **Not Available:**
+
 - Advanced analytics
 - Unlimited holder queries for massive tokens
 - Priority support
@@ -124,17 +136,20 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### Recommended Usage Patterns
 
 **Good for Free Tier:**
+
 - Analyzing new memecoins (thousands of holders)
 - Mid-cap tokens (tens of thousands of holders)
 - Pump.fun launches
 - General wallet activity tracking
 
 **May Hit Limits:**
+
 - Major tokens (SOL, USDC, BONK with millions of holders)
 - High-frequency scanning (>100 req/sec)
 - Bulk historical data queries
 
 **Solution:**
+
 - The program already implements fallback to cached data
 - No action needed - graceful degradation working as designed
 
@@ -143,12 +158,14 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ## 🎯 Performance Metrics
 
 ### Response Times
+
 - **RPC Health Check**: < 200ms
 - **Token Supply Query**: < 500ms
 - **Holder Data** (small tokens): 1-3 seconds
 - **Full Analysis**: 3-5 seconds
 
 ### Success Rates
+
 - **Validation**: 100% (6/6 checks passed)
 - **Analysis Completion**: 100%
 - **Strategy Evaluation**: 100% (4/4 strategies)
@@ -161,39 +178,45 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### If Validation Fails
 
 1. **Check Internet Connection**
+
    ```bash
    ping helius.dev
    ```
 
 2. **Verify .env File**
+
    ```bash
    # Ensure .env exists and has correct format
    Get-Content .env
    ```
 
 3. **Test RPC Directly**
+
    ```bash
    npm run validate
    ```
 
 4. **Check Helius Dashboard**
-   - Visit: https://dashboard.helius.dev
+   - Visit: <https://dashboard.helius.dev>
    - Verify account status
    - Check API key validity
 
 ### If Analysis Returns Errors
 
 **"Too many accounts" Error:**
+
 - ✅ **Expected behavior** for large tokens
 - No action needed
 - Try smaller tokens instead
 
 **"401 Unauthorized" Error:**
+
 - ❌ API key expired or revoked
 - Generate new key from dashboard
 - Update `.env` file
 
 **"429 Rate Limit" Error:**
+
 - ⚠️ Too many requests
 - Wait a few seconds
 - Reduce scan frequency
@@ -213,6 +236,7 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
    - Avoid analyzing SOL/USDC repeatedly
 
 3. **Adjust Scanner Interval**
+
    ```bash
    # Slower interval = fewer API calls
    npm run scan -- --interval=120  # 2 minutes
@@ -229,18 +253,21 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### When to Consider Paid Tier
 
 **Developer Tier ($49/month):**
+
 - Analyzing high-volume tokens regularly
 - Running 24/7 scanner
 - Building commercial trading bot
 - Need faster rate limits
 
 **Professional Tier ($249/month):**
+
 - Multiple concurrent scanners
 - Real-time whale tracking
 - Enterprise-level reliability
 - Priority support
 
 **Current Status:**
+
 - **Free tier is sufficient** for current usage
 - Monitor API call volume
 - Upgrade only if hitting rate limits
@@ -252,6 +279,7 @@ npm run analyze -- --mint=So11111111111111111111111111111111111111112
 ### System Health: 🟢 **EXCELLENT**
 
 All systems operational:
+
 - ✅ Secure RPC endpoint configured correctly
 - ✅ API authentication working
 - ✅ Token analysis functional
@@ -262,11 +290,13 @@ All systems operational:
 ### Next Steps
 
 **Immediate:**
+
 - ✅ Configuration complete - no action needed
 - ✅ System ready for use
 - ✅ Can start autonomous scanner
 
 **Optional:**
+
 - Configure Discord webhook for notifications
 - Set up N8N workflow automation
 - Add Nansen watchlist for copy trading
@@ -299,6 +329,7 @@ SCANNER_MIN_SCORE=75
 ## 🎉 Success Confirmation
 
 **All objectives achieved:**
+
 1. ✅ Secure RPC endpoint configured
 2. ✅ REST API key configured
 3. ✅ Free tier adapted successfully

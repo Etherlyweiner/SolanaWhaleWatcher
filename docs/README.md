@@ -42,7 +42,7 @@ Welcome to the Solana Whale Watcher documentation!
 
 ## 🎯 By Use Case
 
-### I want to...
+### I want to
 
 **...understand how the system works**
 → Read [Executive Summary](./EXECUTIVE_SUMMARY.md)

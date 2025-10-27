@@ -64,6 +64,7 @@ solana-whale-watcher@2.0.0
 ### Source Code Files (31 files)
 
 #### Core Components
+
 - ✅ `src/index.js` - Main entry point
 - ✅ `src/config/defaults.js` - Configuration
 - ✅ `src/core/app.js` - Application orchestration
@@ -73,6 +74,7 @@ solana-whale-watcher@2.0.0
 - ✅ `src/core/scanner.js` - Autonomous token scanner
 
 #### Data Layer
+
 - ✅ `src/data/loaders/solanaLoader.js` - Blockchain data loader
 - ✅ `src/data/providers/heliusProvider.js` - Helius integration
 - ✅ `src/data/providers/heliusRpc.js` - RPC client
@@ -83,11 +85,13 @@ solana-whale-watcher@2.0.0
 - ✅ `src/data/providers/pumpfunProvider.js` - Pump.fun launches
 
 #### Repositories
+
 - ✅ `src/data/repositories/tokenRepository.js` - Token data
 - ✅ `src/data/repositories/walletRepository.js` - Wallet data
 - ✅ `src/data/repositories/strategyRepository.js` - Strategy loader
 
 #### Trading Strategies
+
 - ✅ `src/strategies/sniperStrategy.js` - Sniper trading
 - ✅ `src/strategies/copyTradingStrategy.js` - Whale copy trading
 - ✅ `src/strategies/momentumStrategy.js` - Momentum breakout
@@ -95,9 +99,11 @@ solana-whale-watcher@2.0.0
 - ✅ `src/strategies/index.js` - Strategy exports
 
 #### Risk Management
+
 - ✅ `src/risk/riskManager.js` - Position sizing & stops
 
 #### Utilities
+
 - ✅ `src/util/cache.js` - TTL caching
 - ✅ `src/util/http.js` - HTTP client with retry
 - ✅ `src/util/journal.js` - Trade journaling
@@ -106,6 +112,7 @@ solana-whale-watcher@2.0.0
 - ✅ `src/utils/validateEnv.js` - Environment validation
 
 #### Integrations
+
 - ✅ `src/integrations/discord.js` - Discord webhooks
 
 **All 31 source files present and accounted for.**
@@ -253,24 +260,30 @@ solana-whale-watcher@2.0.0
 ### N8N Installation Options
 
 #### Option 1: npx (Recommended - No Docker Required)
+
 ```bash
 npx n8n
 ```
+
 **Pros**: Quick start, no Docker needed, runs on port 5678  
 **Cons**: Temporary, data not persisted
 
 #### Option 2: npm Global Install
+
 ```bash
 npm install -g n8n
 n8n start
 ```
+
 **Pros**: Persistent installation, data saved  
 **Cons**: Requires global npm permission
 
 #### Option 3: Docker (Requires Docker Desktop)
+
 ```bash
 docker run -it --rm --name n8n -p 5678:5678 -v ~/.n8n:/home/node/.n8n n8nio/n8n
 ```
+
 **Pros**: Isolated, production-ready, data persisted  
 **Cons**: Requires Docker installation
 
@@ -279,7 +292,7 @@ docker run -it --rm --name n8n -p 5678:5678 -v ~/.n8n:/home/node/.n8n n8nio/n8n
 **Use npx for testing**, then upgrade to Docker for production:
 
 1. **Start N8N**: `npx n8n`
-2. **Access**: http://localhost:5678
+2. **Access**: <http://localhost:5678>
 3. **Create account** (local, stored on your machine)
 4. **Build workflows** per `docs/N8N_INTEGRATION.md`
 
@@ -290,6 +303,7 @@ docker run -it --rm --name n8n -p 5678:5678 -v ~/.n8n:/home/node/.n8n n8nio/n8n
 ### What You Can Do Right Now
 
 #### Immediate Use
+
 ```bash
 # Interactive menu
 npm run quickstart
@@ -308,6 +322,7 @@ npm run validate
 ```
 
 #### Integration Ready
+
 - ✅ **Discord Webhooks**: Configure `DISCORD_WEBHOOK_URL` in .env
 - ✅ **N8N Workflows**: Start N8N and connect webhook
 - ✅ **Claude AI**: Add to N8N workflow for analysis
@@ -321,6 +336,7 @@ npm run validate
 ### Security Status: 🟢 GOOD
 
 #### Strengths
+
 - ✅ API keys in .env (gitignored)
 - ✅ Secure RPC endpoint (no key in URL)
 - ✅ Input validation on all user inputs
@@ -329,12 +345,14 @@ npm run validate
 - ✅ Structured logging (no sensitive data)
 
 #### Considerations
+
 - ⚠️ Helius free tier has rate limits
 - ⚠️ Webhook URLs should use HTTPS in production
 - ⚠️ N8N should be behind authentication
 - ⚠️ Discord webhooks can be rate-limited (30/min)
 
 #### Recommendations
+
 - ✅ Currently secure for development
 - 🔄 For production: Use HTTPS, auth, and rate limiting
 - 🔄 For production: Run N8N with Docker + SSL
@@ -375,18 +393,21 @@ The system is complete and production-ready.
 ### Optional Enhancements
 
 #### Short-term (1-2 weeks)
+
 1. **Install Docker Desktop** (if running N8N in production)
 2. **Set up Discord webhook** for scanner notifications
 3. **Create first N8N workflow** (Webhook → Discord)
 4. **Test with Claude AI integration** in N8N
 
 #### Medium-term (1-2 months)
+
 1. **Database integration** via N8N (PostgreSQL/Airtable)
 2. **Telegram bot** for mobile notifications
 3. **Backtesting engine** with historical data
 4. **Custom strategy builder** interface
 
 #### Long-term (3+ months)
+
 1. **Web dashboard** (React/Next.js)
 2. **Machine learning** token prediction
 3. **Multi-chain support** (Base, Ethereum)
@@ -410,12 +431,13 @@ The system is complete and production-ready.
 ### Next Steps
 
 1. **Start N8N**:
+
    ```bash
    npx n8n
    ```
 
 2. **Access N8N**:
-   - Open browser: http://localhost:5678
+   - Open browser: <http://localhost:5678>
    - Create account (local)
 
 3. **Create First Workflow**:
@@ -424,12 +446,14 @@ The system is complete and production-ready.
    - Test with scanner
 
 4. **Configure Whale Watcher**:
+
    ```bash
    # In .env
    N8N_WEBHOOK_URL=http://localhost:5678/webhook/whale-watcher
    ```
 
 5. **Start Scanner**:
+
    ```bash
    npm run scan
    ```
@@ -456,6 +480,7 @@ The system is complete and production-ready.
 | N8N Readiness | 100/100 | ✅ Ready |
 
 ### Strengths
+
 1. ✅ Comprehensive feature set
 2. ✅ Excellent documentation
 3. ✅ Robust error handling
@@ -465,6 +490,7 @@ The system is complete and production-ready.
 7. ✅ Active monitoring capabilities
 
 ### Minor Improvements (Non-blocking)
+
 1. Docker Desktop installation (for production N8N)
 2. Additional test coverage for providers
 3. Performance optimization for very large tokens
@@ -480,11 +506,13 @@ The system is complete and production-ready.
 ### Immediate Next Steps
 
 1. **Start using the program**:
+
    ```bash
    npm run quickstart
    ```
 
 2. **Launch N8N**:
+
    ```bash
    npx n8n
    ```

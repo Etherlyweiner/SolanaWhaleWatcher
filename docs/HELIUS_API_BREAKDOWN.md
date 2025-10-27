@@ -11,12 +11,14 @@ The program is receiving **HTTP 401 Unauthorized** errors when calling the Heliu
 Helius provides **TWO distinct services** with potentially different authentication methods:
 
 ### 1. **RPC Endpoints** (Solana JSON-RPC)
+
 - **Purpose**: Standard Solana blockchain RPC calls (getTokenSupply, getSignaturesForAddress, etc.)
 - **Base URL**: `https://mainnet.helius-rpc.com/`
 - **Authentication**: API key embedded in URL as query parameter
 - **Format**: `https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY`
 
 ### 2. **REST API Endpoints** (Helius-specific services)
+
 - **Purpose**: Enhanced Helius services (token metadata, webhooks, analytics)
 - **Base URL**: `https://api.helius.xyz/`
 - **Authentication**: API key as query parameter
@@ -44,6 +46,7 @@ HELIUS_API_KEY=YOUR_REST_API_KEY
 ### What Each Component Does
 
 #### RPC Client (`src/data/providers/heliusRpc.js`)
+
 ```javascript
 // Makes JSON-RPC calls directly to the RPC URL
 // Examples: getTokenSupply, getTokenLargestAccounts, getMultipleAccounts
@@ -57,6 +60,7 @@ const response = await fetchJson(
 ```
 
 #### REST Client (`src/data/providers/heliusRest.js`)
+
 ```javascript
 // Makes REST API calls for enhanced services
 // Example: token metadata lookup
@@ -120,6 +124,7 @@ HTTP 401 Unauthorized for https://mainnet.helius-rpc.com/?api-key=ad42d0ce-6fe3-
 Helius typically provides **ONE API key** that works for both RPC and REST endpoints.
 
 **What to look for:**
+
 - API key format: Usually a UUID-like string (e.g., `f26c6485-96ad-4f9b-9a8f-9d2da59a2394`)
 - Endpoint URL provided in dashboard
 
@@ -128,15 +133,18 @@ Helius typically provides **ONE API key** that works for both RPC and REST endpo
 Helius offers different endpoint types:
 
 #### Option A: Standard RPC Endpoints
+
 ```
 Mainnet: https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY
 Devnet: https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY
 ```
 
 #### Option B: Secure RPC Endpoints (Account-Specific)
+
 ```
 Format: https://abc-123-fast-mainnet.helius-rpc.com
 ```
+
 - NO API key in URL (embedded in the unique subdomain)
 - More secure as the API key isn't visible in logs
 - Specific to your account
@@ -146,12 +154,14 @@ Format: https://abc-123-fast-mainnet.helius-rpc.com
 Based on what you find in the dashboard:
 
 **If using Standard RPC:**
+
 ```bash
 HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_NEW_KEY
 HELIUS_API_KEY=YOUR_NEW_KEY
 ```
 
 **If using Secure RPC:**
+
 ```bash
 HELIUS_RPC_URL=https://YOUR-UNIQUE-ID-fast-mainnet.helius-rpc.com
 HELIUS_API_KEY=YOUR_NEW_KEY
@@ -175,6 +185,7 @@ curl -X POST "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY" \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -184,6 +195,7 @@ curl -X POST "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY" \
 ```
 
 **401 Unauthorized Response:**
+
 ```json
 {
   "error": "Unauthorized"
@@ -205,6 +217,7 @@ curl -X POST "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY" \
 ```
 
 **Expected Response:**
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -282,17 +295,20 @@ async function request(path, { method = 'POST', body = {} } = {}) {
 ## 📊 Helius Account Tiers & Limits
 
 ### Free Tier
+
 - **Requests**: Limited per month
 - **RPC Methods**: Standard Solana RPC only
 - **Rate Limits**: Lower
 - **May require**: Credit card verification even for free tier
 
 ### Paid Tiers
+
 - **Developer**: $49/month
 - **Professional**: $249/month
 - **Enterprise**: Custom pricing
 
 ### Rate Limits
+
 - Free tier: ~100 requests/second
 - Paid tiers: Higher limits based on plan
 
@@ -303,6 +319,7 @@ async function request(path, { method = 'POST', body = {} } = {}) {
 ### Immediate Steps
 
 1. **Verify API Key Status**
+
    ```bash
    # Test current key
    curl -X POST "https://mainnet.helius-rpc.com/?api-key=ad42d0ce-6fe3-4005-8c2c-2d8debc7d0f8" \
@@ -316,12 +333,14 @@ async function request(path, { method = 'POST', body = {} } = {}) {
    - Create new key or copy existing
 
 3. **Update .env File**
+
    ```bash
    HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=NEW_KEY
    HELIUS_API_KEY=NEW_KEY
    ```
 
 4. **Test Again**
+
    ```bash
    npm run validate
    ```
@@ -337,11 +356,11 @@ async function request(path, { method = 'POST', body = {} } = {}) {
 
 ## 🔗 Resources
 
-- **Helius Dashboard**: https://dashboard.helius.dev
-- **Authentication Docs**: https://www.helius.dev/docs/api-reference/authentication
-- **RPC Endpoints**: https://www.helius.dev/docs/api-reference/endpoints
-- **Solana RPC Methods**: https://www.helius.dev/docs/api-reference/rpc
-- **Support**: https://discord.com/invite/6GXdee3gBj
+- **Helius Dashboard**: <https://dashboard.helius.dev>
+- **Authentication Docs**: <https://www.helius.dev/docs/api-reference/authentication>
+- **RPC Endpoints**: <https://www.helius.dev/docs/api-reference/endpoints>
+- **Solana RPC Methods**: <https://www.helius.dev/docs/api-reference/rpc>
+- **Support**: <https://discord.com/invite/6GXdee3gBj>
 
 ---
 
