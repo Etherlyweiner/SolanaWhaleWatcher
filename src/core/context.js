@@ -27,6 +27,7 @@ module.exports = async function createContext() {
 
   registerLazyService(context, 'gmgnProvider', '../data/providers/gmgnProvider');
   registerLazyService(context, 'dexscreenerProvider', '../data/providers/dexscreenerProvider');
+  registerLazyService(context, 'dexscreenerProviderEnhanced', '../data/providers/dexscreenerProviderEnhanced');
   registerLazyService(context, 'nansenProvider', '../data/providers/nansenProvider');
   registerLazyService(context, 'pumpfunProvider', '../data/providers/pumpfunProvider');
 

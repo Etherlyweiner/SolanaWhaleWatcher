@@ -23,6 +23,9 @@ module.exports = function createCli(context) {
       case 'scan':
         await handleScan(argv.slice(1));
         break;
+      case 'scan_unified':
+        await handleScanUnified(argv.slice(1));
+        break;
       case 'validate':
         await handleValidate(argv.slice(1));
         break;
@@ -87,6 +90,36 @@ module.exports = function createCli(context) {
     });
     
     console.log('🚀 Scanner running... Press Ctrl+C to stop.\n');
+    
+    // Keep process alive
+    await new Promise(() => {});
+  }
+
+  async function handleScanUnified(args) {
+    const options = parseOptions(args);
+    const UnifiedTokenScanner = require('./unifiedTokenScanner');
+    
+    const scanner = new UnifiedTokenScanner(context);
+    
+    logger.info('Starting unified Dexscreener token scanner');
+    
+    await scanner.start();
+    
+    console.log('🌐 Unified Scanner running... Press Ctrl+C to stop.\\n');
+    console.log('Monitoring ALL Solana DEXes via Dexscreener:\\n');
+    console.log('  • Pump.fun (pumpswap)');
+    console.log('  • Raydium');
+    console.log('  • Orca');
+    console.log('  • Meteora');
+    console.log('  • All other Solana DEXes\\n');
+    console.log('Single source of truth = maximum coverage!\\n');
+    
+    // Handle graceful shutdown
+    process.on('SIGINT', () => {
+      console.log('\\n\\n🛑 Stopping unified scanner...');
+      scanner.stop();
+      process.exit(0);
+    });
     
     // Keep process alive
     await new Promise(() => {});
@@ -196,7 +229,8 @@ module.exports = function createCli(context) {
     console.log('COMMANDS:\n');
     console.log('  quickstart        Interactive menu for easy access to all features');
     console.log('  analyze           Analyze a single token (one-time snapshot)');
-    console.log('  scan              Start autonomous token scanner (monitors for opportunities)');
+    console.log('  scan              Start autonomous token scanner (whale activity focus)');
+    console.log('  scan_unified      Start unified Dexscreener scanner (ALL DEXes - RECOMMENDED!)');
     console.log('  stream            Continuous token monitoring with periodic updates');
     console.log('  validate          Verify API keys and RPC connectivity');
     console.log('  backtest          Backtest strategies (currently uses analyze)');
@@ -213,6 +247,8 @@ module.exports = function createCli(context) {
     console.log('  npm run analyze -- --mint=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263\n');
     console.log('  # Start autonomous scanner (checks every 60 seconds)');
     console.log('  npm run scan -- --interval=60\n');
+    console.log('  # Start unified scanner (ALL DEXes via Dexscreener - RECOMMENDED)');
+    console.log('  npm run scan:unified\n');
     console.log('  # Validate API configuration');
     console.log('  npm run validate\n');
     console.log('For full documentation, see USER_GUIDE.md and N8N_INTEGRATION.md\n');

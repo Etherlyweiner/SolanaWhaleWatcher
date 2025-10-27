@@ -10,6 +10,7 @@
     "quickstart": "node src/index.js quickstart",
     "analyze": "node src/index.js analyze",
     "scan": "node src/index.js scan",
+    "scan:unified": "node src/index.js scan_unified",
     "stream": "node src/index.js stream",
     "validate": "node src/index.js validate",
     "backtest": "node src/index.js backtest"
